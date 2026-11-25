@@ -77,7 +77,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
     </div>
 
     <div class="table-wrap">
-        <table>
+        <table class="resp-table">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -96,14 +96,14 @@ require_once dirname(__DIR__) . '/includes/header.php';
                 <?php else: ?>
                     <?php foreach ($attendees as $a): ?>
                     <tr>
-                        <td>#<?= (int) $a['attendee_id'] ?></td>
-                        <td><strong><?= e($a['full_name']) ?></strong></td>
-                        <td><code><?= e($a['national_id']) ?></code></td>
-                        <td><?= e($a['phone']) ?></td>
-                        <td><span class="badge <?= $a['campaign_type'] === 'Hajj' ? 'badge-hajj' : 'badge-umrah' ?>"><?= e($a['campaign_type']) ?></span></td>
-                        <td><?= $a['bus_number'] ? e($a['bus_number']) : '<span class="badge badge-muted">Unassigned</span>' ?></td>
-                        <td><?= $a['tent_number'] ? e($a['tent_number']) : '<span class="badge badge-muted">Unassigned</span>' ?></td>
-                        <td>
+                        <td data-label="Attendee ID">#<?= (int) $a['attendee_id'] ?></td>
+                        <td data-label="Full Name" class="cell-primary"><strong><?= e($a['full_name']) ?></strong></td>
+                        <td data-label="National ID"><code><?= e($a['national_id']) ?></code></td>
+                        <td data-label="Mobile"><a href="tel:<?= e($a['phone']) ?>"><?= e($a['phone']) ?></a></td>
+                        <td data-label="Campaign"><span class="badge <?= $a['campaign_type'] === 'Hajj' ? 'badge-hajj' : 'badge-umrah' ?>"><?= e($a['campaign_type']) ?></span></td>
+                        <td data-label="Assigned Bus"><?= $a['bus_number'] ? '<strong>' . e($a['bus_number']) . '</strong>' : '<span class="badge badge-muted">Unassigned</span>' ?></td>
+                        <td data-label="Assigned Tent"><?= $a['tent_number'] ? '<strong>' . e($a['tent_number']) . '</strong>' : '<span class="badge badge-muted">Unassigned</span>' ?></td>
+                        <td class="cell-actions">
                             <div class="actions-inline">
                                 <a href="/admin/edit_attendee.php?id=<?= (int) $a['attendee_id'] ?>" class="btn btn-sm btn-outline">Edit</a>
                                 <a href="/admin/allocate.php?attendee_id=<?= (int) $a['attendee_id'] ?>" class="btn btn-sm btn-sec">Allocate</a>

@@ -335,9 +335,14 @@ input[type="text"], input[type="password"], input[type="number"], select, textar
     padding: 9px 12px;
     border: 1px solid var(--border);
     border-radius: 7px;
+    font-family: inherit;
     font-size: 14px;
+    line-height: 1.5;
     background: #fff;
     color: var(--text);
+}
+button {
+    font-family: inherit;
 }
 input:focus, select:focus, textarea:focus {
     outline: none;
@@ -530,6 +535,250 @@ tbody tr:hover { background: #f8fafc; }
     background: #f0fdfa;
     border: 1px solid #99f6e4;
     font-size: 13.5px;
+}
+
+/* Card Header Flex Row (prevents squished multi-line buttons on mobile) */
+.card-head-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.card-head-row h2 { margin: 0; }
+.card-head-row .btn { white-space: nowrap; }
+
+/* Chat-Style Support Thread & Modern Auto-Growing Composer */
+.chat-thread {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px 0 14px;
+}
+.chat-bubble {
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.55;
+}
+.chat-bubble.pilgrim {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-top-left-radius: 4px;
+}
+.chat-bubble.admin {
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+    border-top-right-radius: 4px;
+}
+.chat-sender {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: var(--muted);
+}
+.chat-bubble.admin .chat-sender {
+    color: var(--primary-dark);
+}
+.composer-box {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 10px;
+}
+.quick-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.chip-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 11px;
+    border-radius: 99px;
+    border: 1px solid #99f6e4;
+    background: #ffffff;
+    color: var(--primary-dark);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.14s ease, border-color 0.14s ease;
+}
+.chip-btn:hover, .chip-btn:active {
+    background: #ccfbf1;
+    border-color: var(--primary);
+}
+textarea.composer-textarea {
+    width: 100%;
+    min-height: 112px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 14.5px;
+    line-height: 1.55;
+    resize: vertical;
+    overflow-y: hidden;
+}
+.composer-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+}
+.reply-details summary {
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary);
+    padding: 6px 0;
+    user-select: none;
+}
+
+/* Stacked Mobile Data Cards (Screen <= 768px ONLY; Desktop & Print stay tables) */
+@media screen and (max-width: 768px) {
+    .container {
+        padding: 16px 12px;
+    }
+    .card {
+        padding: 15px 14px;
+    }
+    input[type="text"], input[type="password"], input[type="number"], select, textarea, textarea.composer-textarea {
+        font-size: 16px;
+    }
+    .table-wrap {
+        overflow-x: visible;
+    }
+    table.resp-table,
+    table.resp-table tbody {
+        display: block;
+        width: 100%;
+    }
+    table.resp-table thead {
+        display: none;
+    }
+    table.resp-table tbody tr {
+        display: block;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-left: 4px solid var(--primary);
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 12px;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
+    }
+    table.resp-table tbody tr:last-child {
+        margin-bottom: 0;
+    }
+    table.resp-table tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid #f1f5f9;
+        text-align: right;
+        font-size: 13.5px;
+    }
+    table.resp-table tbody td:last-child {
+        border-bottom: none;
+    }
+    table.resp-table tbody td[data-label]::before {
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+        text-align: left;
+        flex-shrink: 0;
+    }
+    table.resp-table tbody td.cell-primary {
+        font-size: 15px;
+        padding-top: 2px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    table.resp-table tbody td.cell-stack {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: left;
+        gap: 6px;
+    }
+    table.resp-table tbody td.cell-actions {
+        display: block;
+        padding-top: 10px;
+        padding-bottom: 2px;
+        border-bottom: none;
+        text-align: left;
+    }
+    table.resp-table tbody td.cell-actions::before {
+        display: none;
+    }
+    table.resp-table tbody td.cell-actions .actions-inline {
+        display: flex;
+        width: 100%;
+        gap: 8px;
+    }
+    table.resp-table tbody td.cell-actions .actions-inline > a,
+    table.resp-table tbody td.cell-actions .actions-inline > button,
+    table.resp-table tbody td.cell-actions .actions-inline > form {
+        flex: 1;
+    }
+    table.resp-table tbody td.cell-actions .actions-inline > form > button,
+    table.resp-table tbody td.cell-actions > form > button,
+    table.resp-table tbody td.cell-actions > a,
+    table.resp-table tbody td.cell-actions > button {
+        width: 100%;
+        min-height: 38px;
+        font-size: 13px;
+    }
+    table.resp-table tbody td[colspan] {
+        display: block;
+        text-align: center;
+        border-bottom: none;
+        padding: 16px 8px;
+    }
+    table.resp-table tbody td[colspan]::before {
+        display: none;
+    }
+    .composer-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .composer-footer .status-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+    .composer-footer .status-row select {
+        flex: 1;
+        max-width: 200px;
+    }
+    .composer-footer .btn-send-reply {
+        width: 100%;
+        min-height: 42px;
+        font-size: 14.5px;
+    }
+    .ticket-delete-row {
+        margin-top: 10px;
+    }
+    .ticket-delete-row .btn {
+        width: 100%;
+        min-height: 38px;
+    }
 }
 
 @media print {

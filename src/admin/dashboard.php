@@ -120,12 +120,12 @@ require_once dirname(__DIR__) . '/includes/header.php';
 </div>
 
 <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <h2 style="margin:0;">Pilgrim Customer Support Requests (<?= (int) $stats['open_tickets'] ?> Active)</h2>
+    <div class="card-head-row">
+        <h2>Pilgrim Customer Support Requests (<?= (int) $stats['open_tickets'] ?> Active)</h2>
         <a href="/admin/support.php" class="btn btn-sm btn-outline">Open Support Inbox &rarr;</a>
     </div>
     <div class="table-wrap">
-        <table>
+        <table class="resp-table">
             <thead>
                 <tr>
                     <th>Ticket</th>
@@ -149,22 +149,26 @@ require_once dirname(__DIR__) . '/includes/header.php';
                         };
                     ?>
                     <tr>
-                        <td><strong>#<?= (int) $rt['ticket_id'] ?></strong></td>
-                        <td>
-                            <strong><?= e($rt['full_name']) ?></strong><br>
-                            <small style="color:var(--muted);"><?= e($rt['bus_number'] ?? 'No Bus') ?> &bull; <?= e($rt['tent_number'] ?? 'No Tent') ?></small>
+                        <td data-label="Ticket" class="cell-primary"><strong>Ticket #<?= (int) $rt['ticket_id'] ?></strong></td>
+                        <td data-label="Pilgrim">
+                            <div>
+                                <strong><?= e($rt['full_name']) ?></strong><br>
+                                <small style="color:var(--muted);"><?= e($rt['bus_number'] ?? 'No Bus') ?> &bull; <?= e($rt['tent_number'] ?? 'No Tent') ?></small>
+                            </div>
                         </td>
-                        <td>
-                            <small style="color:var(--muted);"><?= e($rt['category']) ?></small><br>
-                            <strong><?= e($rt['subject']) ?></strong>
+                        <td data-label="Subject">
+                            <div>
+                                <small style="color:var(--muted);"><?= e($rt['category']) ?></small><br>
+                                <strong><?= e($rt['subject']) ?></strong>
+                            </div>
                         </td>
-                        <td>
+                        <td data-label="Priority">
                             <span class="badge <?= $rt['priority'] === 'urgent' ? 'badge-full' : 'badge-muted' ?>">
                                 <?= strtoupper(e($rt['priority'])) ?>
                             </span>
                         </td>
-                        <td><span class="badge <?= $stClass ?>"><?= strtoupper(str_replace('_', ' ', e($st))) ?></span></td>
-                        <td><a href="/admin/support.php#ticket-<?= (int) $rt['ticket_id'] ?>" class="btn btn-sm">Review / Reply</a></td>
+                        <td data-label="Status"><span class="badge <?= $stClass ?>"><?= strtoupper(str_replace('_', ' ', e($st))) ?></span></td>
+                        <td class="cell-actions"><a href="/admin/support.php#ticket-<?= (int) $rt['ticket_id'] ?>" class="btn btn-sm">Review / Reply</a></td>
                     </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -174,12 +178,12 @@ require_once dirname(__DIR__) . '/includes/header.php';
 </div>
 
 <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <h2 style="margin:0;">Recently Registered Attendees</h2>
+    <div class="card-head-row">
+        <h2>Recently Registered Attendees</h2>
         <a href="/admin/attendees.php" class="btn btn-sm btn-outline">View All Attendees &rarr;</a>
     </div>
     <div class="table-wrap">
-        <table>
+        <table class="resp-table">
             <thead>
                 <tr>
                     <th>Full Name</th>
@@ -193,13 +197,13 @@ require_once dirname(__DIR__) . '/includes/header.php';
             <tbody>
                 <?php foreach ($recent as $a): ?>
                 <tr>
-                    <td><strong><?= e($a['full_name']) ?></strong></td>
-                    <td><code><?= e($a['national_id']) ?></code></td>
-                    <td><span class="badge <?= $a['campaign_type'] === 'Hajj' ? 'badge-hajj' : 'badge-umrah' ?>"><?= e($a['campaign_type']) ?></span></td>
-                    <td><?= $a['bus_number'] ? e($a['bus_number']) : '<span class="badge badge-muted">Unassigned</span>' ?></td>
-                    <td><?= $a['tent_number'] ? e($a['tent_number']) : '<span class="badge badge-muted">Unassigned</span>' ?></td>
-                    <td>
-                        <a href="/admin/allocate.php?attendee_id=<?= (int) $a['attendee_id'] ?>" class="btn btn-sm btn-outline">Allocate</a>
+                    <td data-label="Pilgrim" class="cell-primary"><strong><?= e($a['full_name']) ?></strong></td>
+                    <td data-label="National ID"><code><?= e($a['national_id']) ?></code></td>
+                    <td data-label="Campaign"><span class="badge <?= $a['campaign_type'] === 'Hajj' ? 'badge-hajj' : 'badge-umrah' ?>"><?= e($a['campaign_type']) ?></span></td>
+                    <td data-label="Bus"><?= $a['bus_number'] ? e($a['bus_number']) : '<span class="badge badge-muted">Unassigned</span>' ?></td>
+                    <td data-label="Tent"><?= $a['tent_number'] ? e($a['tent_number']) : '<span class="badge badge-muted">Unassigned</span>' ?></td>
+                    <td class="cell-actions">
+                        <a href="/admin/allocate.php?attendee_id=<?= (int) $a['attendee_id'] ?>" class="btn btn-sm btn-outline">Allocate Bus / Tent</a>
                     </td>
                 </tr>
                 <?php endforeach; ?>

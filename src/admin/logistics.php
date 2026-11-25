@@ -70,7 +70,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
 <div class="card">
     <h2>Buses, Drivers &amp; Departure Schedules</h2>
     <div class="table-wrap" style="margin-bottom:18px;">
-        <table>
+        <table class="resp-table">
             <thead>
                 <tr>
                     <th>Bus #</th>
@@ -82,38 +82,46 @@ require_once dirname(__DIR__) . '/includes/header.php';
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($buses as $b): ?>
+                <?php foreach ($buses as $b):
+                    $fid = 'bus-form-' . (int) $b['bus_id'];
+                ?>
                 <tr>
-                    <form method="POST" action="/admin/logistics.php">
-                        <input type="hidden" name="csrf_token" value="<?= e(getCsrfToken()) ?>">
-                        <input type="hidden" name="action" value="update_bus">
-                        <input type="hidden" name="bus_id" value="<?= (int) $b['bus_id'] ?>">
-                        <td><input type="text" name="bus_number" value="<?= e($b['bus_number']) ?>" required style="min-width:95px;"></td>
-                        <td>
-                            <select name="driver_id" style="min-width:155px;">
-                                <option value="">-- Unassigned --</option>
-                                <?php foreach ($drivers as $d): ?>
-                                    <option value="<?= (int) $d['driver_id'] ?>" <?= (int) ($b['driver_id'] ?? 0) === (int) $d['driver_id'] ? 'selected' : '' ?>>
-                                        <?= e($d['full_name']) ?><?= ($d['status'] ?? 'active') === 'out_of_service' ? ' (OOS)' : '' ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </td>
-                        <td>
-                            <select name="status" style="min-width:130px;">
-                                <option value="active" <?= ($b['status'] ?? 'active') === 'active' ? 'selected' : '' ?>>Active</option>
-                                <option value="out_of_service" <?= ($b['status'] ?? 'active') === 'out_of_service' ? 'selected' : '' ?>>Out of Service</option>
-                            </select>
-                        </td>
-                        <td>
-                            <div style="display:flex;align-items:center;gap:6px;">
-                                <span><?= (int) $b['assigned_count'] ?> /</span>
-                                <input type="number" name="max_capacity" min="<?= max(1, (int) $b['assigned_count']) ?>" value="<?= (int) $b['max_capacity'] ?>" style="width:70px;" required>
-                            </div>
-                        </td>
-                        <td><input type="text" name="departure_time" value="<?= e($b['departure_time']) ?>" required style="min-width:210px;"></td>
-                        <td><button type="submit" class="btn btn-sm">Update</button></td>
-                    </form>
+                    <td data-label="Bus #" class="cell-primary">
+                        <input type="text" name="bus_number" form="<?= $fid ?>" value="<?= e($b['bus_number']) ?>" required style="min-width:95px;max-width:160px;">
+                    </td>
+                    <td data-label="Assigned Driver" class="cell-stack">
+                        <select name="driver_id" form="<?= $fid ?>" style="min-width:155px;">
+                            <option value="">-- Unassigned --</option>
+                            <?php foreach ($drivers as $d): ?>
+                                <option value="<?= (int) $d['driver_id'] ?>" <?= (int) ($b['driver_id'] ?? 0) === (int) $d['driver_id'] ? 'selected' : '' ?>>
+                                    <?= e($d['full_name']) ?><?= ($d['status'] ?? 'active') === 'out_of_service' ? ' (OOS)' : '' ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </td>
+                    <td data-label="Service Status" class="cell-stack">
+                        <select name="status" form="<?= $fid ?>" style="min-width:130px;">
+                            <option value="active" <?= ($b['status'] ?? 'active') === 'active' ? 'selected' : '' ?>>Active</option>
+                            <option value="out_of_service" <?= ($b['status'] ?? 'active') === 'out_of_service' ? 'selected' : '' ?>>Out of Service</option>
+                        </select>
+                    </td>
+                    <td data-label="Capacity (Used / Max)">
+                        <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;">
+                            <span><?= (int) $b['assigned_count'] ?> /</span>
+                            <input type="number" name="max_capacity" form="<?= $fid ?>" min="<?= max(1, (int) $b['assigned_count']) ?>" value="<?= (int) $b['max_capacity'] ?>" style="width:76px;" required>
+                        </div>
+                    </td>
+                    <td data-label="Departure Time" class="cell-stack">
+                        <input type="text" name="departure_time" form="<?= $fid ?>" value="<?= e($b['departure_time']) ?>" required style="min-width:180px;">
+                    </td>
+                    <td class="cell-actions">
+                        <form id="<?= $fid ?>" method="POST" action="/admin/logistics.php">
+                            <input type="hidden" name="csrf_token" value="<?= e(getCsrfToken()) ?>">
+                            <input type="hidden" name="action" value="update_bus">
+                            <input type="hidden" name="bus_id" value="<?= (int) $b['bus_id'] ?>">
+                            <button type="submit" class="btn btn-sm">Update Bus</button>
+                        </form>
+                    </td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -151,14 +159,14 @@ require_once dirname(__DIR__) . '/includes/header.php';
     <div class="card">
         <h2>Tents &amp; Housing Units</h2>
         <div class="table-wrap" style="margin-bottom:16px;">
-            <table>
+            <table class="resp-table">
                 <thead><tr><th>Tent #</th><th>Location Zone</th><th>Occupancy</th></tr></thead>
                 <tbody>
                     <?php foreach ($tents as $t): ?>
                     <tr>
-                        <td><strong><?= e($t['tent_number']) ?></strong></td>
-                        <td><?= e($t['location_zone']) ?></td>
-                        <td><?= (int) $t['assigned_count'] ?> / <?= (int) $t['max_capacity'] ?></td>
+                        <td data-label="Tent #" class="cell-primary"><strong><?= e($t['tent_number']) ?></strong></td>
+                        <td data-label="Location Zone"><?= e($t['location_zone']) ?></td>
+                        <td data-label="Occupancy"><strong><?= (int) $t['assigned_count'] ?> / <?= (int) $t['max_capacity'] ?></strong></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -180,18 +188,20 @@ require_once dirname(__DIR__) . '/includes/header.php';
     <div class="card">
         <h2>Bus Itinerary Milestones</h2>
         <div class="table-wrap" style="margin-bottom:16px;">
-            <table>
+            <table class="resp-table">
                 <thead><tr><th>Bus</th><th>Event &amp; Schedule</th><th></th></tr></thead>
                 <tbody>
                     <?php foreach ($itineraries as $it): ?>
                     <tr>
-                        <td><strong><?= e($it['bus_number']) ?></strong></td>
-                        <td>
-                            <strong><?= e($it['title']) ?></strong><br>
-                            <small style="color:var(--primary);"><?= e($it['event_date']) ?></small><br>
-                            <small style="color:var(--muted);"><?= e($it['description']) ?></small>
+                        <td data-label="Bus" class="cell-primary"><strong><?= e($it['bus_number']) ?></strong></td>
+                        <td data-label="Event &amp; Schedule" class="cell-stack">
+                            <div>
+                                <strong><?= e($it['title']) ?></strong><br>
+                                <small style="color:var(--primary);font-weight:600;"><?= e($it['event_date']) ?></small><br>
+                                <small style="color:var(--muted);"><?= e($it['description']) ?></small>
+                            </div>
                         </td>
-                        <td>
+                        <td class="cell-actions">
                             <form method="POST" action="/admin/logistics.php">
                                 <input type="hidden" name="csrf_token" value="<?= e(getCsrfToken()) ?>">
                                 <input type="hidden" name="action" value="delete_itinerary">

@@ -44,6 +44,30 @@ if ($attendee && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $tickets = $attendee ? $supportModel->getByAttendeeId((int) $attendee['attendee_id']) : [];
 
+$pilgrimPrompts = [
+    [
+        'label'    => 'Bus Gate / Pickup Help',
+        'category' => 'Transport / Bus',
+        'priority' => 'normal',
+        'subject'  => 'Bus Assembly Point & Gate Inquiry',
+        'text'     => 'Assalamu Alaikum, could you please confirm the exact assembly gate and boarding time for my assigned bus?',
+    ],
+    [
+        'label'    => 'Tent / Mattress Request',
+        'category' => 'Accommodation / Tent',
+        'priority' => 'normal',
+        'subject'  => 'Tent Placement Assistance',
+        'text'     => 'Assalamu Alaikum, I would like assistance regarding my assigned tent space / family proximity.',
+    ],
+    [
+        'label'    => 'Urgent Field Help',
+        'category' => 'Medical / Urgent',
+        'priority' => 'urgent',
+        'subject'  => 'Urgent Field Assistance Needed',
+        'text'     => 'I need immediate field assistance at my current location. Please contact me on my registered mobile number.',
+    ],
+];
+
 $pageTitle = 'Customer Support';
 $activeNav = 'support';
 require_once __DIR__ . '/includes/header.php';
@@ -66,12 +90,29 @@ require_once __DIR__ . '/includes/header.php';
 
     <div class="card" id="support-form">
         <h2>Contact Customer Support — Submit a Message</h2>
-        <p style="font-size:13px;color:var(--muted);margin-top:-6px;margin-bottom:16px;">
+        <p style="font-size:13px;color:var(--muted);margin-top:-6px;margin-bottom:14px;">
             Your pilgrim identity and current assignments (<strong><?= e($attendee['full_name']) ?></strong> &bull;
             ID: <code><?= e($attendee['national_id']) ?></code> &bull;
             Bus: <strong><?= e($attendee['bus_number'] ?? 'Unassigned') ?></strong> &bull;
-            Tent: <strong><?= e($attendee['tent_number'] ?? 'Unassigned') ?></strong>) are attached automatically for faster assistance.
+            Tent: <strong><?= e($attendee['tent_number'] ?? 'Unassigned') ?></strong>) are attached automatically.
         </p>
+
+        <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;">Quick Topic Templates (optional — tap to fill):</div>
+        <div class="quick-chips" style="margin-bottom:14px;">
+            <?php foreach ($pilgrimPrompts as $pp): ?>
+                <button type="button" class="chip-btn"
+                        data-target="message"
+                        data-subject-target="subject"
+                        data-subject="<?= e($pp['subject']) ?>"
+                        data-category-target="category"
+                        data-category="<?= e($pp['category']) ?>"
+                        data-priority-target="priority"
+                        data-priority="<?= e($pp['priority']) ?>"
+                        data-text="<?= e($pp['text']) ?>">
+                    + <?= e($pp['label']) ?>
+                </button>
+            <?php endforeach; ?>
+        </div>
 
         <form method="POST" action="/support.php#support-form">
             <input type="hidden" name="csrf_token" value="<?= e(getCsrfToken()) ?>">
@@ -106,11 +147,11 @@ require_once __DIR__ . '/includes/header.php';
 
             <div class="form-group">
                 <label for="message">Please describe how Customer Support can assist you</label>
-                <textarea id="message" name="message" rows="4" maxlength="1500"
+                <textarea id="message" name="message" class="composer-textarea" rows="4" maxlength="1500"
                           placeholder="Write your full message, location details, or request for Campaign Administration..." required><?= e($form['message']) ?></textarea>
             </div>
 
-            <button type="submit" class="btn">Send Message to Campaign Admin</button>
+            <button type="submit" class="btn" style="width:100%;max-width:320px;min-height:42px;">Send Message to Campaign Admin</button>
         </form>
     </div>
 
@@ -145,19 +186,30 @@ require_once __DIR__ . '/includes/header.php';
                         </div>
                     </div>
 
-                    <h3 style="margin:0 0 6px;"><?= e($t['subject']) ?></h3>
-                    <p style="margin:0;font-size:14px;white-space:pre-line;"><?= e($t['message']) ?></p>
+                    <div class="chat-thread" style="margin-bottom:0;">
+                        <div class="chat-bubble pilgrim">
+                            <div class="chat-sender">
+                                <span>Your Message</span>
+                                <span><?= e($t['created_at']) ?></span>
+                            </div>
+                            <div style="font-weight:700;font-size:15px;color:var(--text);margin-bottom:4px;"><?= e($t['subject']) ?></div>
+                            <div style="white-space:pre-line;"><?= e($t['message']) ?></div>
+                        </div>
 
-                    <?php if (!empty($t['admin_reply'])): ?>
-                        <div class="admin-reply-box">
-                            <strong style="color:var(--primary-dark);">Campaign Administration Reply:</strong>
-                            <p style="margin:4px 0 0;white-space:pre-line;"><?= e($t['admin_reply']) ?></p>
-                        </div>
-                    <?php else: ?>
-                        <div style="margin-top:8px;font-size:12px;color:var(--muted);">
-                            Awaiting response from Campaign Administration.
-                        </div>
-                    <?php endif; ?>
+                        <?php if (!empty($t['admin_reply'])): ?>
+                            <div class="chat-bubble admin">
+                                <div class="chat-sender">
+                                    <span>Campaign Administration Reply</span>
+                                    <span><?= e($t['updated_at']) ?></span>
+                                </div>
+                                <div style="white-space:pre-line;"><?= e($t['admin_reply']) ?></div>
+                            </div>
+                        <?php else: ?>
+                            <div style="font-size:12.5px;color:var(--muted);padding-left:4px;">
+                                Awaiting response from Campaign Administration.
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>

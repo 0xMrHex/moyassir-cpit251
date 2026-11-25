@@ -116,7 +116,7 @@ require_once __DIR__ . '/includes/header.php';
             <div class="card">
                 <h2>Passenger Manifest — <?= e($bus['bus_number']) ?> (<?= count($passengers) ?> Pilgrims)</h2>
                 <div class="table-wrap">
-                    <table>
+                    <table class="resp-table">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -133,12 +133,12 @@ require_once __DIR__ . '/includes/header.php';
                             <?php else: ?>
                                 <?php foreach ($passengers as $idx => $p): ?>
                                 <tr>
-                                    <td><?= $idx + 1 ?></td>
-                                    <td><strong><?= e($p['full_name']) ?></strong></td>
-                                    <td><code><?= e($p['national_id']) ?></code></td>
-                                    <td><?= e($p['phone']) ?></td>
-                                    <td><?= e($p['tent_number'] ?? 'Unassigned') ?></td>
-                                    <td style="font-family:monospace;">[ &nbsp; ] On Board</td>
+                                    <td data-label="Seat #">#<?= $idx + 1 ?></td>
+                                    <td data-label="Passenger" class="cell-primary"><strong><?= e($p['full_name']) ?></strong></td>
+                                    <td data-label="National ID"><code><?= e($p['national_id']) ?></code></td>
+                                    <td data-label="Mobile"><a href="tel:<?= e($p['phone']) ?>"><?= e($p['phone']) ?></a></td>
+                                    <td data-label="Tent"><strong><?= e($p['tent_number'] ?? 'Unassigned') ?></strong></td>
+                                    <td data-label="Boarding" style="font-family:monospace;">[ &nbsp; ] On Board</td>
                                 </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>

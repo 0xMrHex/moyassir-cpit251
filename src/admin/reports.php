@@ -120,7 +120,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
     </div>
 
     <div class="table-wrap">
-        <table>
+        <table class="resp-table">
             <thead>
                 <tr>
                     <th>#</th>
@@ -138,13 +138,13 @@ require_once dirname(__DIR__) . '/includes/header.php';
                 <?php else: ?>
                     <?php foreach ($manifest['passengers'] as $idx => $p): ?>
                     <tr>
-                        <td><?= $idx + 1 ?></td>
-                        <td><strong><?= e($p['full_name']) ?></strong></td>
-                        <td><code><?= e($p['national_id']) ?></code></td>
-                        <td><?= e($p['phone']) ?></td>
-                        <td><?= e($p['campaign_type']) ?></td>
-                        <td><?= e($p['tent_number'] ?? 'Unassigned') ?></td>
-                        <td style="font-family:monospace;">[ &nbsp; ] Boarded</td>
+                        <td data-label="Seat #">#<?= $idx + 1 ?></td>
+                        <td data-label="Passenger" class="cell-primary"><strong><?= e($p['full_name']) ?></strong></td>
+                        <td data-label="National ID"><code><?= e($p['national_id']) ?></code></td>
+                        <td data-label="Mobile"><a href="tel:<?= e($p['phone']) ?>"><?= e($p['phone']) ?></a></td>
+                        <td data-label="Campaign"><?= e($p['campaign_type']) ?></td>
+                        <td data-label="Assigned Tent"><strong><?= e($p['tent_number'] ?? 'Unassigned') ?></strong></td>
+                        <td data-label="Boarding Check" style="font-family:monospace;">[ &nbsp; ] Boarded</td>
                     </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -167,7 +167,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
     </div>
 
     <div class="table-wrap">
-        <table>
+        <table class="resp-table">
             <thead>
                 <tr>
                     <th>#</th>
@@ -185,13 +185,13 @@ require_once dirname(__DIR__) . '/includes/header.php';
                 <?php else: ?>
                     <?php foreach ($roster['occupants'] as $idx => $o): ?>
                     <tr>
-                        <td><?= $idx + 1 ?></td>
-                        <td><strong><?= e($o['full_name']) ?></strong></td>
-                        <td><code><?= e($o['national_id']) ?></code></td>
-                        <td><?= e($o['phone']) ?></td>
-                        <td><?= e($o['campaign_type']) ?></td>
-                        <td><?= e($o['bus_number'] ?? 'Unassigned') ?></td>
-                        <td style="font-family:monospace;">[ &nbsp; ] Checked In</td>
+                        <td data-label="Space #">#<?= $idx + 1 ?></td>
+                        <td data-label="Occupant" class="cell-primary"><strong><?= e($o['full_name']) ?></strong></td>
+                        <td data-label="National ID"><code><?= e($o['national_id']) ?></code></td>
+                        <td data-label="Mobile"><a href="tel:<?= e($o['phone']) ?>"><?= e($o['phone']) ?></a></td>
+                        <td data-label="Campaign"><?= e($o['campaign_type']) ?></td>
+                        <td data-label="Assigned Bus"><strong><?= e($o['bus_number'] ?? 'Unassigned') ?></strong></td>
+                        <td data-label="Check-In" style="font-family:monospace;">[ &nbsp; ] Checked In</td>
                     </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>

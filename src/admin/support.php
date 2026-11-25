@@ -8,9 +8,9 @@ $supportModel = new SupportTicket($db);
 $error        = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $csrf       = $_POST['csrf_token'] ?? '';
-    $action     = trim((string) ($_POST['action'] ?? 'respond'));
-    $ticketId   = (int) ($_POST['ticket_id'] ?? 0);
+    $csrf     = $_POST['csrf_token'] ?? '';
+    $action   = trim((string) ($_POST['action'] ?? 'respond'));
+    $ticketId = (int) ($_POST['ticket_id'] ?? 0);
 
     if (!verifyCsrfToken($csrf)) {
         $error = 'Security token expired. Please try saving your reply again.';
@@ -44,6 +44,29 @@ $allTickets = ($statusFilter === '' && $priorityFilter === '') ? $tickets : $sup
 $openCount     = count(array_filter($allTickets, static fn(array $t): bool => in_array($t['status'], ['open', 'in_progress'], true)));
 $urgentCount   = count(array_filter($allTickets, static fn(array $t): bool => in_array($t['status'], ['open', 'in_progress'], true) && $t['priority'] === 'urgent'));
 $resolvedCount = count(array_filter($allTickets, static fn(array $t): bool => $t['status'] === 'resolved'));
+
+$quickReplies = [
+    [
+        'label'  => 'Gate & Bus Confirmed',
+        'status' => 'resolved',
+        'text'   => 'Wa Alaikum Assalam. Your assigned bus and departure gate are confirmed. Please arrive 30 minutes prior to departure for boarding check-in.',
+    ],
+    [
+        'label'  => 'Tent Request Approved',
+        'status' => 'resolved',
+        'text'   => 'Your tent accommodation request has been approved and coordinated with our camp supervisor on site.',
+    ],
+    [
+        'label'  => 'Coordinator Calling Shortly',
+        'status' => 'in_progress',
+        'text'   => 'A campaign field coordinator has received your urgent message and will contact your mobile number shortly to assist you.',
+    ],
+    [
+        'label'  => 'Issue Resolved',
+        'status' => 'resolved',
+        'text'   => 'This support request has been resolved by Campaign Administration. Wishing you a safe and accepted pilgrimage.',
+    ],
+];
 
 $pageTitle = 'Customer Support Inbox';
 $activeNav = 'admin_support';
@@ -116,6 +139,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
         <p style="color:var(--muted);margin:0;">No customer support tickets match the selected criteria.</p>
     <?php else: ?>
         <?php foreach ($tickets as $t):
+            $tid    = (int) $t['ticket_id'];
             $status = (string) $t['status'];
             $statusBadge = match ($status) {
                 'resolved'    => 'badge-ok',
@@ -123,22 +147,23 @@ require_once dirname(__DIR__) . '/includes/header.php';
                 default       => 'badge-hajj',
             };
             $statusLabel = strtoupper(str_replace('_', ' ', $status));
-            $isUrgent = ($t['priority'] === 'urgent');
+            $isUrgent    = ($t['priority'] === 'urgent');
+            $hasReply    = !empty($t['admin_reply']);
         ?>
-            <div class="ticket-card <?= $status === 'resolved' ? 'resolved' : ($isUrgent ? 'urgent' : '') ?>" id="ticket-<?= (int) $t['ticket_id'] ?>">
+            <div class="ticket-card <?= $status === 'resolved' ? 'resolved' : ($isUrgent ? 'urgent' : '') ?>" id="ticket-<?= $tid ?>">
                 <div class="ticket-meta">
                     <div>
-                        <strong>Ticket #<?= (int) $t['ticket_id'] ?></strong> &bull;
+                        <strong>Ticket #<?= $tid ?></strong> &bull;
                         <span><?= e($t['category']) ?></span>
                         <?php if ($isUrgent): ?>
                             <span class="badge badge-full" style="margin-left:6px;">URGENT</span>
                         <?php endif; ?>
                         <span class="badge <?= $statusBadge ?>" style="margin-left:6px;"><?= e($statusLabel) ?></span>
                     </div>
-                    <div>Submitted: <?= e($t['created_at']) ?></div>
+                    <div><?= e($t['created_at']) ?></div>
                 </div>
 
-                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:13px;">
+                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:13px;">
                     <div>
                         <strong><?= e($t['full_name']) ?></strong>
                         (<code><?= e($t['national_id']) ?></code> &bull;
@@ -152,37 +177,78 @@ require_once dirname(__DIR__) . '/includes/header.php';
                     </a>
                 </div>
 
-                <h3 style="margin:0 0 6px;"><?= e($t['subject']) ?></h3>
-                <p style="margin:0 0 12px;font-size:14px;white-space:pre-line;"><?= e($t['message']) ?></p>
-
-                <form method="POST" action="/admin/support.php" style="border-top:1px solid #e2e8f0;padding-top:12px;">
-                    <input type="hidden" name="csrf_token" value="<?= e(getCsrfToken()) ?>">
-                    <input type="hidden" name="ticket_id" value="<?= (int) $t['ticket_id'] ?>">
-
-                    <div class="form-grid" style="align-items:end;">
-                        <div class="form-group" style="margin-bottom:0;grid-column:1 / -1;">
-                            <label for="reply-<?= (int) $t['ticket_id'] ?>">Admin Reply to Pilgrim</label>
-                            <textarea id="reply-<?= (int) $t['ticket_id'] ?>" name="admin_reply" rows="2" maxlength="1500"
-                                      placeholder="Write official response or instructions visible on the pilgrim's support page..."><?= e((string) ($t['admin_reply'] ?? '')) ?></textarea>
+                <div class="chat-thread">
+                    <div class="chat-bubble pilgrim">
+                        <div class="chat-sender">
+                            <span>Pilgrim Message &mdash; <?= e($t['full_name']) ?></span>
+                            <span><?= e($t['category']) ?></span>
                         </div>
+                        <div style="font-weight:700;font-size:15px;color:var(--text);margin-bottom:4px;"><?= e($t['subject']) ?></div>
+                        <div style="white-space:pre-line;"><?= e($t['message']) ?></div>
                     </div>
 
-                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:10px;">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <label for="status-<?= (int) $t['ticket_id'] ?>" style="font-size:13px;font-weight:600;">Status:</label>
-                            <select id="status-<?= (int) $t['ticket_id'] ?>" name="status" style="width:auto;">
-                                <option value="open" <?= $status === 'open' ? 'selected' : '' ?>>Open</option>
-                                <option value="in_progress" <?= $status === 'in_progress' ? 'selected' : '' ?>>In Progress</option>
-                                <option value="resolved" <?= $status === 'resolved' ? 'selected' : '' ?>>Resolved</option>
-                            </select>
+                    <?php if ($hasReply): ?>
+                        <div class="chat-bubble admin">
+                            <div class="chat-sender">
+                                <span>Campaign Administration Official Reply</span>
+                                <span><?= e($t['updated_at']) ?></span>
+                            </div>
+                            <div style="white-space:pre-line;"><?= e((string) $t['admin_reply']) ?></div>
                         </div>
-                        <button type="submit" class="btn btn-sm">Save Reply &amp; Update Status</button>
-                    </div>
-                </form>
-                <form method="POST" action="/admin/support.php" style="margin-top:8px;text-align:right;" onsubmit="return confirm('Delete Support Ticket #<?= (int) $t['ticket_id'] ?>?');">
+                    <?php endif; ?>
+                </div>
+
+                <?php if ($status === 'resolved' && $hasReply): ?>
+                <details class="reply-details">
+                    <summary>Edit Official Reply or Change Ticket Status</summary>
+                <?php endif; ?>
+
+                    <form method="POST" action="/admin/support.php" class="composer-box">
+                        <input type="hidden" name="csrf_token" value="<?= e(getCsrfToken()) ?>">
+                        <input type="hidden" name="action" value="respond">
+                        <input type="hidden" name="ticket_id" value="<?= $tid ?>">
+
+                        <label for="reply-<?= $tid ?>" style="display:block;font-size:13px;font-weight:700;margin-bottom:6px;color:#0f172a;">
+                            <?= $hasReply ? 'Update Official Reply' : 'Write Reply to Pilgrim' ?>
+                            <span style="font-weight:400;color:var(--muted);font-size:12px;">(tap a quick preset or type below)</span>
+                        </label>
+
+                        <div class="quick-chips">
+                            <?php foreach ($quickReplies as $qr): ?>
+                                <button type="button" class="chip-btn"
+                                        data-target="reply-<?= $tid ?>"
+                                        data-status-target="status-<?= $tid ?>"
+                                        data-status="<?= e($qr['status']) ?>"
+                                        data-text="<?= e($qr['text']) ?>">
+                                    + <?= e($qr['label']) ?>
+                                </button>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <textarea id="reply-<?= $tid ?>" name="admin_reply" class="composer-textarea" rows="4" maxlength="1500"
+                                  placeholder="Type a clear response or instructions for <?= e($t['full_name']) ?>..."><?= e((string) ($t['admin_reply'] ?? '')) ?></textarea>
+
+                        <div class="composer-footer">
+                            <div class="status-row" style="display:flex;align-items:center;gap:8px;">
+                                <label for="status-<?= $tid ?>" style="font-size:13px;font-weight:700;white-space:nowrap;">Ticket Status:</label>
+                                <select id="status-<?= $tid ?>" name="status" style="width:auto;min-width:145px;">
+                                    <option value="open" <?= $status === 'open' ? 'selected' : '' ?>>Open</option>
+                                    <option value="in_progress" <?= $status === 'in_progress' ? 'selected' : '' ?>>In Progress</option>
+                                    <option value="resolved" <?= $status === 'resolved' ? 'selected' : '' ?>>Resolved</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-send-reply">Send Reply &amp; Update Status</button>
+                        </div>
+                    </form>
+
+                <?php if ($status === 'resolved' && $hasReply): ?>
+                </details>
+                <?php endif; ?>
+
+                <form method="POST" action="/admin/support.php" class="ticket-delete-row" style="margin-top:8px;text-align:right;" onsubmit="return confirm('Delete Support Ticket #<?= $tid ?>?');">
                     <input type="hidden" name="csrf_token" value="<?= e(getCsrfToken()) ?>">
                     <input type="hidden" name="action" value="delete_ticket">
-                    <input type="hidden" name="ticket_id" value="<?= (int) $t['ticket_id'] ?>">
+                    <input type="hidden" name="ticket_id" value="<?= $tid ?>">
                     <button type="submit" class="btn btn-sm btn-outline" style="color:var(--danger);border-color:#fca5a5;">Delete Ticket</button>
                 </form>
             </div>

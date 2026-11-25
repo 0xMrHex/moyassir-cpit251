@@ -83,7 +83,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
 <div class="card">
     <h2>Registered Bus Drivers (<?= count($drivers) ?>)</h2>
     <div class="table-wrap">
-        <table>
+        <table class="resp-table">
             <thead>
                 <tr>
                     <th>Driver &amp; Login</th>
@@ -102,23 +102,25 @@ require_once dirname(__DIR__) . '/includes/header.php';
                         $isOos = ($d['status'] ?? 'active') === 'out_of_service';
                     ?>
                     <tr>
-                        <td>
-                            <strong><?= e($d['full_name']) ?></strong><br>
-                            <small style="color:var(--muted);">Login: <code><?= e($d['username']) ?></code></small>
+                        <td data-label="Driver" class="cell-primary">
+                            <div>
+                                <strong><?= e($d['full_name']) ?></strong><br>
+                                <small style="color:var(--muted);">Login: <code><?= e($d['username']) ?></code></small>
+                            </div>
                         </td>
-                        <td><code><?= e($d['license_number']) ?></code></td>
-                        <td><?= e($d['phone']) ?></td>
-                        <td>
+                        <td data-label="License #"><code><?= e($d['license_number']) ?></code></td>
+                        <td data-label="Mobile"><a href="tel:<?= e($d['phone']) ?>"><?= e($d['phone']) ?></a></td>
+                        <td data-label="Status">
                             <span class="badge <?= $isOos ? 'badge-full' : 'badge-ok' ?>">
                                 <?= $isOos ? 'OUT OF SERVICE' : 'ACTIVE' ?>
                             </span>
                         </td>
-                        <td>
-                            <form method="POST" action="/admin/drivers.php" class="actions-inline">
+                        <td data-label="Assign to Bus" class="cell-stack">
+                            <form method="POST" action="/admin/drivers.php" style="display:flex;gap:6px;width:100%;">
                                 <input type="hidden" name="csrf_token" value="<?= e(getCsrfToken()) ?>">
                                 <input type="hidden" name="action" value="assign_bus">
                                 <input type="hidden" name="driver_id" value="<?= (int) $d['driver_id'] ?>">
-                                <select name="bus_id" style="width:auto;min-width:165px;padding:6px 8px;font-size:13px;">
+                                <select name="bus_id" style="flex:1;min-width:140px;padding:7px 8px;">
                                     <option value="">-- Unassigned --</option>
                                     <?php foreach ($buses as $b): ?>
                                         <option value="<?= (int) $b['bus_id'] ?>" <?= (int) ($d['assigned_bus_id'] ?? 0) === (int) $b['bus_id'] ? 'selected' : '' ?>>
@@ -126,10 +128,10 @@ require_once dirname(__DIR__) . '/includes/header.php';
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
-                                <button type="submit" class="btn btn-sm btn-sec">Assign</button>
+                                <button type="submit" class="btn btn-sm btn-sec" style="white-space:nowrap;">Assign</button>
                             </form>
                         </td>
-                        <td>
+                        <td class="cell-actions">
                             <div class="actions-inline">
                                 <form method="POST" action="/admin/drivers.php">
                                     <input type="hidden" name="csrf_token" value="<?= e(getCsrfToken()) ?>">
@@ -214,7 +216,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
         <h2>Bus Fleet Service Status Control</h2>
         <p style="font-size:13px;color:var(--muted);margin-top:-6px;">Mark any bus as Out of Service for maintenance or return it to Active duty. Out-of-service buses block new passenger allocations and alert drivers/attendees.</p>
         <div class="table-wrap">
-            <table>
+            <table class="resp-table">
                 <thead>
                     <tr>
                         <th>Bus</th>
@@ -228,14 +230,16 @@ require_once dirname(__DIR__) . '/includes/header.php';
                         $busOos = ($b['status'] ?? 'active') === 'out_of_service';
                     ?>
                     <tr>
-                        <td><strong><?= e($b['bus_number']) ?></strong><br><small style="color:var(--muted);"><?= (int) $b['assigned_count'] ?>/<?= (int) $b['max_capacity'] ?> seats</small></td>
-                        <td><?= e($b['driver_name']) ?></td>
-                        <td>
+                        <td data-label="Bus" class="cell-primary">
+                            <div><strong><?= e($b['bus_number']) ?></strong> <small style="color:var(--muted);">(<?= (int) $b['assigned_count'] ?>/<?= (int) $b['max_capacity'] ?> seats)</small></div>
+                        </td>
+                        <td data-label="Assigned Driver"><?= e($b['driver_name']) ?></td>
+                        <td data-label="Service Status">
                             <span class="badge <?= $busOos ? 'badge-full' : 'badge-ok' ?>">
                                 <?= $busOos ? 'OUT OF SERVICE' : 'ACTIVE' ?>
                             </span>
                         </td>
-                        <td>
+                        <td class="cell-actions">
                             <form method="POST" action="/admin/drivers.php">
                                 <input type="hidden" name="csrf_token" value="<?= e(getCsrfToken()) ?>">
                                 <input type="hidden" name="action" value="toggle_bus_status">
