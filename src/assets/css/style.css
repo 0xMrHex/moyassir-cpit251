@@ -171,13 +171,14 @@ a:hover { text-decoration: underline; }
         color: #f8fafc;
         z-index: 1001;
         border-right: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 8px 0 28px rgba(2, 6, 23, 0.45);
+        box-shadow: none;
         transform: translateX(-100%);
         transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
         overflow-y: auto;
     }
     .mobile-drawer.open {
         transform: translateX(0);
+        box-shadow: 8px 0 28px rgba(2, 6, 23, 0.45);
     }
     .drawer-header {
         display: flex;
