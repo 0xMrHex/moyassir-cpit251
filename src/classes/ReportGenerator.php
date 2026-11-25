@@ -86,6 +86,12 @@ class ReportGenerator
         $umrahCount = (int) (($this->db->queryOne(
             "SELECT COUNT(*) AS cnt FROM ATTENDEES WHERE campaign_type = 'Umrah'"
         ))['cnt'] ?? 0);
+        $openTickets = (int) (($this->db->queryOne(
+            "SELECT COUNT(*) AS cnt FROM SUPPORT_TICKETS WHERE status IN ('open', 'in_progress')"
+        ))['cnt'] ?? 0);
+        $urgentTickets = (int) (($this->db->queryOne(
+            "SELECT COUNT(*) AS cnt FROM SUPPORT_TICKETS WHERE status IN ('open', 'in_progress') AND priority = 'urgent'"
+        ))['cnt'] ?? 0);
 
         return [
             'total_attendees'        => $totalAtt,
@@ -97,6 +103,8 @@ class ReportGenerator
             'unassigned'             => $unassigned,
             'hajj_count'             => $hajjCount,
             'umrah_count'            => $umrahCount,
+            'open_tickets'           => $openTickets,
+            'urgent_tickets'         => $urgentTickets,
         ];
     }
 

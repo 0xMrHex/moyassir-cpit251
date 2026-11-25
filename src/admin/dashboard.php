@@ -3,16 +3,18 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/includes/auth_check.php';
 requireAdmin();
 
-$db          = Database::getInstance();
-$reportModel = new ReportGenerator($db);
-$busModel    = new Bus($db);
-$tentModel   = new Tent($db);
-$attModel    = new Attendee($db);
+$db           = Database::getInstance();
+$reportModel  = new ReportGenerator($db);
+$busModel     = new Bus($db);
+$tentModel    = new Tent($db);
+$attModel     = new Attendee($db);
+$supportModel = new SupportTicket($db);
 
-$stats  = $reportModel->getSummaryStats();
-$buses  = $busModel->getAllWithOccupancy();
-$tents  = $tentModel->getAllWithOccupancy();
-$recent = array_slice($attModel->getAll(), 0, 5);
+$stats         = $reportModel->getSummaryStats();
+$buses         = $busModel->getAllWithOccupancy();
+$tents         = $tentModel->getAllWithOccupancy();
+$recent        = array_slice($attModel->getAll(), 0, 5);
+$recentTickets = array_slice($supportModel->getAll(), 0, 4);
 
 $pageTitle = 'Admin Dashboard';
 $activeNav = 'dashboard';
@@ -26,7 +28,10 @@ require_once dirname(__DIR__) . '/includes/header.php';
     </div>
     <div class="actions-inline">
         <a href="/admin/add_attendee.php" class="btn">+ Register Attendee</a>
-        <a href="/admin/drivers.php" class="btn btn-sec">Manage Bus Drivers</a>
+        <a href="/admin/support.php" class="btn btn-sec">
+            Support Inbox (<?= (int) $stats['open_tickets'] ?> Open)
+        </a>
+        <a href="/admin/drivers.php" class="btn btn-outline">Manage Bus Drivers</a>
         <a href="/admin/allocate.php" class="btn btn-outline">Allocate Bus / Tent</a>
         <a href="/admin/reports.php" class="btn btn-outline">Print Manifests</a>
     </div>
@@ -111,6 +116,60 @@ require_once dirname(__DIR__) . '/includes/header.php';
             </div>
         </div>
         <?php endforeach; ?>
+    </div>
+</div>
+
+<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h2 style="margin:0;">Pilgrim Customer Support Requests (<?= (int) $stats['open_tickets'] ?> Active)</h2>
+        <a href="/admin/support.php" class="btn btn-sm btn-outline">Open Support Inbox &rarr;</a>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ticket</th>
+                    <th>Pilgrim</th>
+                    <th>Category &amp; Subject</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($recentTickets)): ?>
+                    <tr><td colspan="6" style="text-align:center;color:var(--muted);">No support requests submitted yet.</td></tr>
+                <?php else: ?>
+                    <?php foreach ($recentTickets as $rt):
+                        $st = (string) $rt['status'];
+                        $stClass = match ($st) {
+                            'resolved'    => 'badge-ok',
+                            'in_progress' => 'badge-umrah',
+                            default       => 'badge-hajj',
+                        };
+                    ?>
+                    <tr>
+                        <td><strong>#<?= (int) $rt['ticket_id'] ?></strong></td>
+                        <td>
+                            <strong><?= e($rt['full_name']) ?></strong><br>
+                            <small style="color:var(--muted);"><?= e($rt['bus_number'] ?? 'No Bus') ?> &bull; <?= e($rt['tent_number'] ?? 'No Tent') ?></small>
+                        </td>
+                        <td>
+                            <small style="color:var(--muted);"><?= e($rt['category']) ?></small><br>
+                            <strong><?= e($rt['subject']) ?></strong>
+                        </td>
+                        <td>
+                            <span class="badge <?= $rt['priority'] === 'urgent' ? 'badge-full' : 'badge-muted' ?>">
+                                <?= strtoupper(e($rt['priority'])) ?>
+                            </span>
+                        </td>
+                        <td><span class="badge <?= $stClass ?>"><?= strtoupper(str_replace('_', ' ', e($st))) ?></span></td>
+                        <td><a href="/admin/support.php#ticket-<?= (int) $rt['ticket_id'] ?>" class="btn btn-sm">Review / Reply</a></td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
     </div>
 </div>
 

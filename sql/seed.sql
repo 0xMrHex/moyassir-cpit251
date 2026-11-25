@@ -65,3 +65,7 @@ INSERT INTO ITINERARIES (title, event_date, description, bus_id) VALUES
 ('Tarwiyah Day Departure to Mina (Wave 2)', '8 Dhul-Hijjah — 07:15 AM', 'Board BUS-102 at Jeddah Assembly Point Gate 3 directly to Mina Zone B.', 2),
 ('Arafat Day Transfer (Wave 2)', '9 Dhul-Hijjah — 05:30 AM', 'Assemble at Mina Zone B Gate 9 for guided transfer to Arafat.', 2),
 ('Umrah Shuttle to Masjid Al-Haram', '15 Ramadan — 04:00 PM', 'Departure from Jeddah Umrah Terminal via Miqat checkpoint to Aziziyah Residence and Al-Haram.', 3);
+
+INSERT INTO SUPPORT_TICKETS (attendee_id, category, priority, subject, message, status, admin_reply) VALUES
+(1, 'Schedule / Itinerary', 'normal', 'Luggage Check-In Time for BUS-101', 'Assalamu Alaikum, could you confirm whether Gate 2 opens at 05:45 AM for luggage loading before departure?', 'resolved', 'Wa Alaikum Assalam. Yes, Gate 2 opens at 05:45 AM and Driver Khalid Al-Harbi will assist with luggage tagging.'),
+(7, 'Accommodation / Tent', 'urgent', 'Ground-Row Placement in TENT-B02', 'Requesting ground-row mattress space near Mina Zone B Gate 9 entrance due to knee mobility.', 'open', NULL);

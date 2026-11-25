@@ -36,9 +36,9 @@
 **Moyassir (ميسر)** is a centralized, responsive web application for **Hajj and Umrah Registration & Campaign Logistics**, built with **PHP 8.2** and an embedded relational **SQLite 3 database (via PHP PDO)**. Its primary objective is to transition local Hajj and Umrah campaign operators away from fragmented, error-prone manual workflows—such as paper lists, standalone Excel sheets, and scattered WhatsApp broadcasts—to a reliable relational database acting as a single source of truth.
 
 * **Intended Users (3 Role-Separated Portals):**
-  * **Campaign Managers (Administrators):** Manage attendee registrations, add/remove bus drivers, assign drivers 1:1 to buses, toggle `Active` / `Out of Service` status, assign buses and tents with automated capacity protection, update campaign schedules/itineraries, search and filter records, and generate printable ground-staff manifests and CSV rosters.
+  * **Campaign Managers (Administrators):** Manage attendee registrations, add/remove bus drivers, assign drivers 1:1 to buses, toggle `Active` / `Out of Service` status, assign buses and tents with automated capacity protection, update campaign schedules/itineraries, review and respond to pilgrim customer support requests, search and filter records, and generate printable ground-staff manifests and CSV rosters.
   * **Bus Drivers:** Sign into a dedicated read-only Driver Portal to view their service status, assigned bus & passenger count, departure time, bus itinerary schedule, and passenger boarding checklist.
-  * **Attendees (Pilgrims):** Sign into a simple, mobile-friendly read-only portal using their National ID to view their personal pass, assigned bus & driver contact, tent location zone, and live itinerary.
+  * **Attendees (Pilgrims):** Sign into a simple, mobile-friendly portal using their National ID to view their personal pass, assigned bus & driver contact, tent location zone, and live itinerary, or click **Contact Customer Support** to submit direct assistance messages and view official Campaign Administration replies.
 * **Scope Note (Hajj & Umrah Alignment):** The system supports both **Hajj** and **Umrah** campaigns via `ATTENDEES.campaign_type` (`'Hajj'` | `'Umrah'`), handling both Hajj camp tents (`Mina Zone A/B`) and Umrah housing blocks & Haram shuttles (`Aziziyah Residence`).
 
 ### 1.2 Problem Statement
@@ -73,11 +73,11 @@ Peer-reviewed Hajj transportation research by **Owaidah et al. (2023)** (*PLOS O
 We adopted the **Agile (Scrum)** software development methodology, organizing delivery into five iterative sprints (Sprint 0 through Sprint 4). Agile suited this project because it allowed early validation of our 3NF relational schema and core CRUD rules, and accommodated iterative refinements—including **transitioning from heavy standalone Oracle XE setup to portable relational SQLite 3 via PHP PDO** for frictionless multi-laptop collaboration, and **adding a dedicated Bus Driver module (`US-08`)** in response to operational review.
 
 ### 2.1 Team Scrum Roles
-* **Mohammed Aljedani (2435544) — Product Owner & Database Lead:** Managed the Product Backlog, authored the 6-table 3NF SQL DDL & seed scripts (`sql/schema.sql`, `sql/seed.sql`), and led ERD/DFD modeling.
-* **Omar Alofi (2436990) — Scrum Master & Backend Lead:** Facilitated sprint reviews, implemented the 8 PHP 8.2 OOP classes (`Database`, `User`, `Driver`, `Attendee`, `Bus`, `Tent`, `Itinerary`, `ReportGenerator`), RBAC authentication, and capacity/status validation.
-* **Saud Faisal Almesfer (2435484) — Frontend & QA Lead:** Designed UI wireframes, responsive CSS, Attendee & Driver portals, printable manifest layouts, and executed the 17-case automated test suite & screenshot verification.
+* **Mohammed Aljedani (2435544) — Product Owner & Database Lead:** Managed the Product Backlog, authored the 7-table 3NF SQL DDL & seed scripts (`sql/schema.sql`, `sql/seed.sql`), and led ERD/DFD modeling.
+* **Omar Alofi (2436990) — Scrum Master & Backend Lead:** Facilitated sprint reviews, implemented the 9 PHP 8.2 OOP classes (`Database`, `User`, `Driver`, `Attendee`, `Bus`, `Tent`, `Itinerary`, `SupportTicket`, `ReportGenerator`), RBAC authentication, and capacity/status validation.
+* **Saud Faisal Almesfer (2435484) — Frontend & QA Lead:** Designed UI wireframes, responsive CSS, Attendee, Support & Driver portals, printable manifest layouts, and executed the 20-case automated test suite & screenshot verification.
 
-### 2.2 Product Backlog (8 Core Functions)
+### 2.2 Product Backlog (9 Core Functions)
 
 | ID | Role | User Story | Core Function | Priority | Sprint |
 |---|---|---|---|---|---|
@@ -85,10 +85,11 @@ We adopted the **Agile (Scrum)** software development methodology, organizing de
 | **US-02** | Admin | Add, view, edit, and delete attendee records with auto-created portal accounts. | Attendee CRUD | High | Sprint 2 |
 | **US-03** | Admin | Assign attendees to buses and tents with server-side capacity & status checks. | Bus & Tent Allocation | High | Sprint 2 |
 | **US-04** | Admin | Search and filter attendees by National ID, name, phone, bus, tent, or campaign type. | Search & Filtering | Medium | Sprint 3 |
-| **US-05** | Attendee | View personal bus number, driver contact, tent zone, and itinerary (read-only). | Attendee Portal | High | Sprint 3 |
+| **US-05** | Attendee | View personal bus number, driver contact, tent zone, and itinerary. | Attendee Portal | High | Sprint 3 |
 | **US-06** | Admin | Generate printable bus manifests and tent rosters (PDF/Print & CSV). | Report Generation | Medium | Sprint 3 |
 | **US-07** | Admin | Add/update buses, departure times, tents, and itineraries reflected live on portals. | Logistics Management | Medium | Sprint 3 |
 | **US-08** | Admin / Driver | Add/remove bus drivers, assign drivers 1:1 to buses, toggle Active / Out of Service status, and serve a Driver Schedule Portal. | Driver Management & Portal | High | Sprint 4 |
+| **US-09** | Attendee / Admin | Click Contact Customer Support on the Pilgrim Portal to submit an assistance message directly to Admin, and track official replies & ticket status. | Pilgrim Customer Support & Admin Inbox | High | Sprint 4 |
 
 ### 2.3 Sprint Execution Summary
 
@@ -98,21 +99,22 @@ We adopted the **Agile (Scrum)** software development methodology, organizing de
 | **Sprint 1** | Weeks 4–5 | All 6 SE diagrams (Wireframes, Screen Flow, ERD, DFD L0/L1, Class, Deployment) + normalized `sql/schema.sql` & `sql/seed.sql`. | Completed |
 | **Sprint 2** | Weeks 6–7 | `Database` PDO class, bcrypt auth & CSRF protection, Admin Dashboard, Attendee CRUD + auto account provisioning, capacity-checked Allocation. | Completed |
 | **Sprint 3** | Weeks 8–9 | Mobile-first Attendee Portal, multi-criteria Search/Filter, Printable Manifests + CSV Export, Bus/Tent/Itinerary Management, UI polish. | Completed |
-| **Sprint 4** | Weeks 10–11 | Bus Driver Management & Driver Portal (`US-08`), PHP lint (25/25 clean), **17/17 automated tests PASSED**, 7 live UI screenshots, and 100% diagram-to-code sync. | Completed |
+| **Sprint 4** | Weeks 10–11 | Bus Driver Module (`US-08`), Pilgrim Customer Support & Admin Inbox (`US-09`), PHP lint (30/30 clean), **20/20 automated tests PASSED**, 9 live UI screenshots, and 100% diagram-to-code sync. | Completed |
 
 ---
 
 ## Chapter 3: System Requirements
 
-### 3.1 Functional Requirements (8 Core Functions — Exceeding Minimum 4)
+### 3.1 Functional Requirements (9 Core Functions — Exceeding Minimum 4)
 1. **FR-01 Three-Role Authentication & RBAC:** Authenticate Admins, Drivers, and Attendees against bcrypt-hashed passwords in `USERS`, maintain PHP sessions, and block cross-role URL access.
 2. **FR-02 Attendee Lifecycle CRUD:** Create (with atomic `USERS` account creation), view, edit (syncing National ID changes and optional password resets), and cascade-delete attendee records.
 3. **FR-03 Capacity & Service-Status Protected Allocation:** Validate live `COUNT(*)` occupancy against `max_capacity` and verify `BUSES.status = 'active'` before saving assignments, exempting the attendee's own current seat to prevent self-blocking.
 4. **FR-04 Multi-Criteria Search & Filtering:** Search attendees by full name, National ID, or phone using bound SQL `LIKE` predicates combined with Bus, Tent, and Campaign Type dropdown filters.
-5. **FR-05 Read-Only Attendee Portal:** Render a personalized, mobile-friendly view of the logged-in attendee's bus, driver phone, departure time, service status alerts, tent zone, and itinerary milestones.
+5. **FR-05 Attendee Logistics Pass Portal:** Render a personalized, mobile-friendly view of the logged-in attendee's bus, driver phone, departure time, service status alerts, tent zone, and itinerary milestones.
 6. **FR-06 Manifest & Roster Reporting:** Generate printable HTML/PDF bus passenger manifests and tent occupancy rosters with ground-staff check-in boxes and one-click CSV download.
 7. **FR-07 Logistics & Itinerary Updates:** Allow Admins to create or update buses (driver, status, capacity, departure time), tents, and itinerary schedules that propagate immediately to driver and attendee portals.
 8. **FR-08 Bus Driver Management & Driver Portal:** Allow Admins to add/remove drivers (with auto-created `driver` login accounts), assign drivers 1:1 to buses (`UNIQUE(driver_id)`), and toggle `Active` / `Out of Service` status; allow Drivers to view their assigned bus, schedule timeline, and passenger manifest on `/driver_portal.php`.
+9. **FR-09 Pilgrim Customer Support & Admin Support Inbox:** Provide a direct **Contact Customer Support** button and structured message form on `/support.php` that automatically attaches the pilgrim's relational logistics context (`attendee_id`) and delivers tickets to `/admin/support.php`, enabling Admins to filter by status/priority, post official replies, and update resolution status (`open` / `in_progress` / `resolved`).
 
 ### 3.2 Non-Functional Requirements
 * **Security:** PDO prepared statements with named bound parameters (`PDOStatement::bindValue`) on 100% of SQL queries to prevent SQL injection; `PASSWORD_BCRYPT` hashing; CSRF tokens on all POST forms; HTML escaping (`htmlspecialchars`) against XSS; session ID regeneration on login.
@@ -126,15 +128,15 @@ We adopted the **Agile (Scrum)** software development methodology, organizing de
 > **Diagram Export Note:** All diagrams can be viewed and exported as crisp PDF/PNG images by opening `docs/diagrams/diagrams-viewer.html` and `docs/diagrams/01-wireframes.html` in Chrome or Edge. Every diagram below matches the final implemented PHP 8.2 + SQLite 3 codebase 100%.
 
 ### 4.1 User Interface & Design
-1. **Wireframes / UI Mockups:** Full 9-screen wireframe blueprint located in `docs/diagrams/01-wireframes.html` (Login, Admin Dashboard, Attendees CRUD/Search, Add/Edit Attendee, Bus & Tent Allocation, Printable Manifest, Bus Drivers & Service Status, Logistics & Itineraries, Mobile Attendee Portal, and Mobile Driver Portal).
+1. **Wireframes / UI Mockups:** Full 11-screen wireframe blueprint located in `docs/diagrams/01-wireframes.html` (Login, Admin Dashboard, Attendees CRUD/Search, Add/Edit Attendee, Bus & Tent Allocation, Printable Manifest, Bus Drivers & Service Status, Logistics & Itineraries, Mobile Attendee Portal, Mobile Driver Portal, Pilgrim Customer Support Form, and Admin Support Inbox).
 2. **Screen Flow Diagram:** Complete 3-role guarded flow diagram and access matrix located in `docs/diagrams/02-screen-flow.md`.
 
 ### 4.2 Database & Data Design
-1. **Entity-Relationship Diagram (ERD):** 6 normalized tables (`USERS`, `DRIVERS`, `BUSES`, `TENTS`, `ATTENDEES`, `ITINERARIES`) with cardinality rules (`1:0..1` driver-to-bus uniqueness) and data dictionary located in `docs/diagrams/03-erd.md`.
-2. **Data Flow Diagrams (DFD Level 0 & Level 1):** Context diagram (Admin, Driver, Attendee) and 7-process functional decomposition (`1.0`–`7.0`) across data stores `D1`–`D6` located in `docs/diagrams/04-dfd.md`.
+1. **Entity-Relationship Diagram (ERD):** 7 normalized tables (`USERS`, `DRIVERS`, `BUSES`, `TENTS`, `ATTENDEES`, `ITINERARIES`, `SUPPORT_TICKETS`) with cardinality rules (`1:0..1` driver-to-bus uniqueness and `1:N` pilgrim support tickets) and data dictionary located in `docs/diagrams/03-erd.md`.
+2. **Data Flow Diagrams (DFD Level 0 & Level 1):** Context diagram (Admin, Driver, Attendee) and 8-process functional decomposition (`1.0`–`8.0`) across data stores `D1`–`D7` located in `docs/diagrams/04-dfd.md`.
 
 ### 4.3 System Behavior & Architecture
-1. **UML Class Diagram:** Models all 8 implemented PHP classes (`Database`, `User`, `Driver`, `Attendee`, `Bus`, `Tent`, `Itinerary`, `ReportGenerator`) with exact method signatures located in `docs/diagrams/05-class-diagram.md`.
+1. **UML Class Diagram:** Models all 9 implemented PHP classes (`Database`, `User`, `Driver`, `Attendee`, `Bus`, `Tent`, `Itinerary`, `SupportTicket`, `ReportGenerator`) with exact method signatures located in `docs/diagrams/05-class-diagram.md`.
 2. **UML Deployment Diagram:** Physical architecture depicting Client Devices (Admin Desktop, Driver Smartphone, Attendee Smartphone) ↔ HTTP/HTTPS ↔ XAMPP Web Server (Apache + PHP 8.2.12 + PDO `pdo_sqlite`) ↔ Embedded SQLite 3 Relational Database (`data/hajj_umrah.sqlite`) located in `docs/diagrams/06-deployment-diagram.md`.
 
 ---
@@ -184,12 +186,14 @@ function homePathForRole(?string $role): string
 ### 5.3 Final Implemented UI Screenshots
 Live screenshots captured directly from the running application are stored in `docs/testing/screenshots/`:
 * **Invalid Login Security Alert:** `docs/testing/screenshots/01_login_invalid_alert.png`
-* **Admin Operations Dashboard:** `docs/testing/screenshots/02_admin_dashboard.png`
+* **Admin Operations Dashboard (with Support Inbox Counter):** `docs/testing/screenshots/02_admin_dashboard.png`
 * **Bus Capacity Protection Alert:** `docs/testing/screenshots/03_bus_full_capacity_alert.png`
 * **Printable Bus Passenger Manifest:** `docs/testing/screenshots/04_printable_bus_manifest.png`
-* **Attendee Read-Only Portal:** `docs/testing/screenshots/05_attendee_portal.png`
+* **Attendee Portal (with Contact Customer Support Button):** `docs/testing/screenshots/05_attendee_portal.png`
 * **Admin Bus Drivers & Service Status Management:** `docs/testing/screenshots/06_admin_drivers.png`
 * **Bus Driver Schedule & Boarding Portal:** `docs/testing/screenshots/07_driver_portal.png`
+* **Pilgrim Customer Support Form & Admin Replies:** `docs/testing/screenshots/08_pilgrim_customer_support.png`
+* **Admin Customer Support Inbox & Response Controls:** `docs/testing/screenshots/09_admin_support_inbox.png`
 
 ---
 
@@ -197,11 +201,11 @@ Live screenshots captured directly from the running application are stored in `d
 
 ### 6.1 Testing Approach
 We validated the system at three levels:
-1. **Static Syntax Verification:** Ran `php -l` across all 25 PHP files (**0 syntax errors**).
-2. **Automated End-to-End Functional Testing (`src/tests/run_automated_tests.php`):** Executed **17 formal test cases (`TC-01`–`TC-17`)** via real HTTP requests with cookies, CSRF tokens, redirects, and DB assertions.
-3. **Live Browser UI Verification:** Inspected rendered screens across Admin, Driver, and Attendee roles in Chromium to confirm layout integrity, error alerts, printable tables, and mobile responsiveness.
+1. **Static Syntax Verification:** Ran `php -l` across all 30 PHP files (**0 syntax errors**).
+2. **Automated End-to-End Functional Testing (`src/tests/run_automated_tests.php`):** Executed **20 formal test cases (`TC-01`–`TC-20`)** via real HTTP requests with cookies, CSRF tokens, redirects, and DB assertions.
+3. **Live Browser UI Verification:** Inspected rendered screens across Admin, Driver, and Attendee roles in Chromium to confirm layout integrity, error alerts, customer support tickets, printable tables, and mobile responsiveness.
 
-### 6.2 Functional Test Results Summary (**17 / 17 PASSED**)
+### 6.2 Functional Test Results Summary (**20 / 20 PASSED**)
 
 | Test ID | Feature Tested | Expected Result | Observed Result | Status |
 |---|---|---|---|---|
@@ -222,6 +226,9 @@ We validated the system at three levels:
 | **TC-15** | Out of Service Enforcement | Out-of-service bus alerts driver & blocks allocation | Alert shown on portal; allocation rejected | **PASS** |
 | **TC-16** | Driver Status & Removal | Toggle driver Out of Service & delete cleanly | Status updated, then removed cleanly | **PASS** |
 | **TC-17** | Logistics Driver Guard | Block OOS driver & enforce 1:1 driver-bus uniqueness | Blocked OOS driver on `logistics.php` | **PASS** |
+| **TC-18** | Pilgrim Customer Support | Pilgrim submits support message from `/support.php` | Ticket `#3` created & routed to Admin Support Inbox | **PASS** |
+| **TC-19** | Admin Reply & Live Sync | Admin replies & marks `resolved` on `/admin/support.php` | Reply & `RESOLVED` status shown immediately to Pilgrim | **PASS** |
+| **TC-20** | Support RBAC & Cleanup | Block Attendee from `/admin/support.php` & clean test ticket | Redirected to `/portal.php`; test ticket cleaned up | **PASS** |
 
 Full testing details and screenshot references are archived in `docs/testing/test-cases-and-results.md`.
 
@@ -230,7 +237,7 @@ Full testing details and screenshot references are archived in `docs/testing/tes
 ## Chapter 7: Conclusion & Future Work
 
 ### 7.1 Conclusion
-The **Hajj and Umrah Registration System** demonstrates the complete software engineering lifecycle—from real-world problem analysis and Agile Scrum execution to 3NF SQLite relational design, six consistent SE diagrams, secure OOP PHP implementation across three distinct user roles, and 100% passing functional verification (**17/17 test cases**). By replacing manual spreadsheets and scattered chat messages with a capacity-protected operational database and dedicated Driver and Attendee portals, the system directly solves the day-to-day coordination bottlenecks of local Hajj and Umrah campaigns.
+**Moyassir (ميسر)** demonstrates the complete software engineering lifecycle—from real-world problem analysis and Agile Scrum execution to 3NF SQLite relational design across 7 normalized tables, six consistent SE diagrams, secure OOP PHP implementation across three distinct user roles and 9 core functions (including closed-loop Pilgrim Customer Support), and 100% passing functional verification (**20/20 test cases**). By replacing manual spreadsheets and scattered chat messages with a capacity-protected operational database, dedicated Driver and Attendee portals, and direct support messaging, the system directly solves the day-to-day coordination bottlenecks of local Hajj and Umrah campaigns.
 
 ### 7.2 Future Work
 1. **QR Code Bus Boarding Passes:** Embed scannable QR codes on `portal.php` so bus drivers can mark passenger boarding electronically via smartphone camera.

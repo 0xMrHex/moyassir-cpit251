@@ -6,6 +6,10 @@ $activeNav = $activeNav ?? '';
 $role      = currentRole();
 $username  = $_SESSION['username'] ?? '';
 $flash     = getFlash();
+$openSupportCount = 0;
+if ($role === 'admin') {
+    $openSupportCount = (new SupportTicket(Database::getInstance()))->countActive();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,6 +35,9 @@ $flash     = getFlash();
             <a href="/admin/drivers.php" class="<?= $activeNav === 'drivers' ? 'active' : '' ?>">Bus Drivers</a>
             <a href="/admin/logistics.php" class="<?= $activeNav === 'logistics' ? 'active' : '' ?>">Buses &amp; Itineraries</a>
             <a href="/admin/reports.php" class="<?= $activeNav === 'reports' ? 'active' : '' ?>">Manifests &amp; Reports</a>
+            <a href="/admin/support.php" class="<?= $activeNav === 'admin_support' ? 'active' : '' ?>">
+                Support<?php if ($openSupportCount > 0): ?><span class="nav-badge"><?= $openSupportCount ?></span><?php endif; ?>
+            </a>
         </div>
         <?php elseif ($role === 'driver'): ?>
         <div class="nav-links">
@@ -39,6 +46,7 @@ $flash     = getFlash();
         <?php else: ?>
         <div class="nav-links">
             <a href="/portal.php" class="<?= $activeNav === 'portal' ? 'active' : '' ?>">My Pilgrim Portal</a>
+            <a href="/support.php#support-form" class="<?= $activeNav === 'support' ? 'active' : '' ?>">Customer Support</a>
         </div>
         <?php endif; ?>
 

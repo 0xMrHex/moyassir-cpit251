@@ -33,14 +33,14 @@
 </header>
 
 <section>
-  <h2>1. Screen Flow Diagram (Three-Role Navigation)</h2>
+  <h2>1. Screen Flow Diagram (Three-Role Navigation &amp; Customer Support)</h2>
   <div class="mermaid">
 flowchart TD
     Start(["Browser Request /index.php"]) --> AuthCheck{"Active PHP Session?"}
     AuthCheck -- "No" --> Login["Login Page (login.php)"]
     AuthCheck -- "Yes (Admin)" --> AdminDash["Admin Dashboard"]
     AuthCheck -- "Yes (Driver)" --> DriverPortal["Driver Schedule Portal"]
-    AuthCheck -- "Yes (Attendee)" --> Portal["Attendee Read-Only Portal"]
+    AuthCheck -- "Yes (Attendee)" --> Portal["Pilgrim Pass Portal (portal.php)"]
     Login --> Verify{"Verify Credentials & Role"}
     Verify -- "Invalid" --> Login
     Verify -- "Valid Admin" --> AdminDash
@@ -51,6 +51,8 @@ flowchart TD
     AdminDash --> DrvMgmt["Bus Drivers & Service Status"]
     AdminDash --> Logis["Buses, Tents & Itineraries"]
     AdminDash --> Rep["Printable Manifests & CSV"]
+    AdminDash --> SupInbox["Support Inbox & Replies (admin/support.php)"]
+    Portal --> SupForm["Customer Support Form (support.php)"]
     AdminDash --> Logout["Logout (logout.php)"]
     DriverPortal --> Logout
     Portal --> Logout
@@ -59,7 +61,7 @@ flowchart TD
 </section>
 
 <section>
-  <h2>2. Entity-Relationship Diagram (ERD — 6 Normalized SQLite 3 Tables)</h2>
+  <h2>2. Entity-Relationship Diagram (ERD — 7 Normalized SQLite 3 Tables)</h2>
   <div class="mermaid">
 erDiagram
     USERS ||--o| ATTENDEES : "authenticates pilgrim"
@@ -68,6 +70,7 @@ erDiagram
     BUSES ||--o{ ATTENDEES : "transports"
     TENTS ||--o{ ATTENDEES : "accommodates"
     BUSES ||--o{ ITINERARIES : "follows schedule"
+    ATTENDEES ||--o{ SUPPORT_TICKETS : "submits ticket"
     USERS {
         INTEGER user_id PK
         TEXT username UK
@@ -113,6 +116,16 @@ erDiagram
         TEXT description
         INTEGER bus_id FK
     }
+    SUPPORT_TICKETS {
+        INTEGER ticket_id PK
+        INTEGER attendee_id FK
+        TEXT category
+        TEXT priority
+        TEXT subject
+        TEXT message
+        TEXT status
+        TEXT admin_reply
+    }
   </div>
 </section>
 
@@ -124,12 +137,12 @@ flowchart LR
     Driver["Bus Driver"]
     Att["Attendee (Pilgrim)"]
     Sys(("0.0<br/>Moyassir System<br/>(Hajj & Umrah Logistics)"))
-    Admin -- "Attendee & Driver CRUD, Bus Status, Allocations, Schedules, Reports" --> Sys
-    Sys -- "Dashboard KPIs, Capacity/Status Alerts, Manifests & CSV" --> Admin
+    Admin -- "Attendee & Driver CRUD, Allocations, Schedules, Support Replies" --> Sys
+    Sys -- "Dashboard KPIs, Capacity/Status Alerts, Support Inbox, Manifests" --> Admin
     Driver -- "Driver Login Credentials" --> Sys
     Sys -- "Assigned Bus, Service Status, Schedule & Manifest" --> Driver
-    Att -- "National ID & Password" --> Sys
-    Sys -- "Read-Only Personal Card: Bus, Driver, Tent & Itinerary" --> Att
+    Att -- "National ID Login & Customer Support Messages" --> Sys
+    Sys -- "Pilgrim Pass (Bus, Driver, Tent, Itinerary) & Admin Replies" --> Att
   </div>
 </section>
 
@@ -147,12 +160,14 @@ flowchart TD
     P5(("5.0 Manifest Reports"))
     P6(("6.0 Attendee Portal"))
     P7(("7.0 Driver Portal"))
+    P8(("8.0 Customer Support"))
     D1[("D1: USERS")]
     D2[("D2: ATTENDEES")]
     D3[("D3: BUSES")]
     D4[("D4: TENTS")]
     D5[("D5: ITINERARIES")]
     D6[("D6: DRIVERS")]
+    D7[("D7: SUPPORT_TICKETS")]
 
     Admin --> P1
     Driver --> P1
@@ -187,11 +202,15 @@ flowchart TD
     D3 --> P7
     D5 --> P7
     D2 --> P7
+    Attendee <--> P8
+    Admin <--> P8
+    P8 <--> D7
+    D2 --> P8
   </div>
 </section>
 
 <section>
-  <h2>4. UML Class Diagram (8 PHP Backend Classes)</h2>
+  <h2>4. UML Class Diagram (9 PHP Backend Classes)</h2>
   <div class="mermaid">
 classDiagram
     class Database {
@@ -255,6 +274,15 @@ classDiagram
         +update(id, data) bool
         +delete(id) bool
     }
+    class SupportTicket {
+        -Database db
+        +create(attendeeId, data) array
+        +getByAttendeeId(attendeeId) array
+        +getAll(statusFilter, priorityFilter) array
+        +respond(ticketId, status, reply) array
+        +delete(ticketId) bool
+        +countActive() int
+    }
     class ReportGenerator {
         -Database db
         +getBusManifest(busId) array
@@ -273,6 +301,8 @@ classDiagram
     Attendee --> Tent
     Tent --> Database
     Itinerary --> Database
+    SupportTicket --> Database
+    SupportTicket --> Attendee
     ReportGenerator --> Database
   </div>
 </section>
@@ -288,8 +318,8 @@ flowchart TB
     end
     HTTP(("HTTP / HTTPS<br/>TCP 80/443 (Dev: 8088)"))
     subgraph AppHost["Application & Database Host (XAMPP Windows)"]
-        PHP["Apache / PHP 8.2.12<br/>admin/*, portal.php, driver_portal.php, classes/*<br/>Driver: PHP PDO (pdo_sqlite)"]
-        SQLite[("SQLite 3 Relational DB<br/>data/hajj_umrah.sqlite<br/>PRAGMA foreign_keys = ON<br/>USERS, DRIVERS, BUSES, TENTS, ATTENDEES, ITINERARIES")]
+        PHP["Apache / PHP 8.2.12<br/>admin/*, portal.php, support.php, driver_portal.php, classes/*<br/>Driver: PHP PDO (pdo_sqlite)"]
+        SQLite[("SQLite 3 Relational DB<br/>data/hajj_umrah.sqlite<br/>PRAGMA foreign_keys = ON<br/>USERS, DRIVERS, BUSES, TENTS, ATTENDEES, ITINERARIES, SUPPORT_TICKETS")]
     end
     PC <--> HTTP
     DriverMobile <--> HTTP

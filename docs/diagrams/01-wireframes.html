@@ -227,9 +227,10 @@
       <div class="wf-body">
         <div class="phone">
           <div style="background:#0f766e;color:#fff;padding:10px;border-radius:10px;margin-bottom:10px;">
-            <div style="font-size:10px;opacity:.85;">HAJJ CAMPAIGN PORTAL (READ-ONLY)</div>
+            <div style="font-size:10px;opacity:.85;">HAJJ CAMPAIGN PORTAL</div>
             <div style="font-weight:700;font-size:14px;">Abdullah Al-Qahtani</div>
             <div style="font-size:11px;">ID: 1098765431 • Hajj</div>
+            <div style="margin-top:6px;"><span class="btn" style="background:#fff;color:#0f172a;font-size:10px;padding:3px 8px;">Contact Customer Support &rarr;</span></div>
           </div>
           <div class="wire-box">
             <strong>Assigned Transport</strong> <span class="badge ok">ACTIVE</span><br>
@@ -247,7 +248,7 @@
             • 9 Dhul-Hijjah 05:00 AM — Arafat Transfer
           </div>
         </div>
-        <div class="caption" style="text-align:center;">Read-only pilgrim pass; blocks /admin/* and /driver_portal.php.</div>
+        <div class="caption" style="text-align:center;">Pilgrim pass with direct Customer Support button; blocks /admin/* and /driver_portal.php.</div>
       </div>
     </div>
 
@@ -277,6 +278,54 @@
           </div>
         </div>
         <div class="caption" style="text-align:center;">Read-only driver schedule &amp; boarding list; shows alerts if marked Out of Service.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Support Wireframes -->
+  <div class="grid" style="margin-top:24px;">
+    <!-- Screen 10: Pilgrim Customer Support Form -->
+    <div class="wf-card">
+      <div class="wf-head"><span>Screen 10: Pilgrim Customer Support Form</span><span>/support.php</span></div>
+      <div class="wf-body">
+        <div class="wire-box">
+          <strong>Contact Customer Support — Submit a Message</strong><br>
+          <small>Auto-Attached: Abdullah Al-Qahtani • ID: 1098765431 • BUS-101 • TENT-A01</small>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+            <div class="input">Category: [Transport / Bus ▾]</div>
+            <div class="input">Urgency: [Normal / Urgent ▾]</div>
+          </div>
+          <div class="input" style="margin-top:8px;">Subject: [Luggage Check-In Time for BUS-101]</div>
+          <div class="input" style="margin-top:8px;">Message: [Describe how Customer Support can assist you...]</div>
+          <div style="margin-top:8px;"><span class="btn">Send Message to Campaign Admin</span></div>
+        </div>
+        <div class="wire-box" style="background:#f0fdfa;">
+          <strong>My Support Requests &amp; Admin Replies</strong> <span class="badge ok">RESOLVED</span><br>
+          Ticket #1 — Admin Reply: <em>"Gate 2 opens at 05:45 AM; Driver Khalid will assist."</em>
+        </div>
+        <div class="caption">Direct Pilgrim-to-Admin messaging form with real-time status and official reply tracking.</div>
+      </div>
+    </div>
+
+    <!-- Screen 11: Admin Customer Support Inbox -->
+    <div class="wf-card">
+      <div class="wf-head"><span>Screen 11: Admin Customer Support Inbox</span><span>/admin/support.php</span></div>
+      <div class="wf-body">
+        <div class="wire-box" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div>Filter Status: [All / Open / Resolved ▾] &nbsp; Priority: [All / Urgent ▾]</div>
+          <span class="btn">Apply Filter</span>
+        </div>
+        <div class="wire-box">
+          <strong>Ticket #2 • Accommodation / Tent</strong> <span class="badge full">URGENT</span> <span class="badge ok">OPEN</span><br>
+          <small>Pilgrim: Reem Al-Juhani (1098765437 • 0502345607) • Bus: BUS-102 • Tent: TENT-B02</small><br>
+          <p style="margin:6px 0;">"Requesting ground-row mattress space near Mina Zone B Gate 9 entrance."</p>
+          <div class="input">Admin Reply: [Write official response to pilgrim...]</div>
+          <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;">
+            <span>Status: [In Progress / Resolved ▾]</span>
+            <span class="btn">Save Reply &amp; Update Status</span>
+          </div>
+        </div>
+        <div class="caption">Displays full pilgrim bus/tent context alongside 1-click reallocation and official reply controls.</div>
       </div>
     </div>
   </div>

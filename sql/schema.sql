@@ -1,12 +1,13 @@
 -- ============================================================================
--- CPIT251: Hajj and Umrah Registration System
+-- CPIT251: Moyassir (ميسر) — Hajj and Umrah Campaign Logistics System
 -- Relational Database Schema DDL — SQLite 3 (via PHP PDO)
--- 6 Normalized (3NF) Tables: USERS, DRIVERS, BUSES, TENTS, ATTENDEES, ITINERARIES
+-- 7 Normalized (3NF) Tables: USERS, DRIVERS, BUSES, TENTS, ATTENDEES, ITINERARIES, SUPPORT_TICKETS
 -- Team: Mohammed Aljedani, Omar Alofi, Saud Faisal Almesfer (Section IT2)
 -- ============================================================================
 
 PRAGMA foreign_keys = ON;
 
+DROP TABLE IF EXISTS SUPPORT_TICKETS;
 DROP TABLE IF EXISTS ITINERARIES;
 DROP TABLE IF EXISTS ATTENDEES;
 DROP TABLE IF EXISTS BUSES;
@@ -92,9 +93,28 @@ CREATE TABLE ITINERARIES (
     FOREIGN KEY (bus_id) REFERENCES BUSES(bus_id) ON DELETE CASCADE
 );
 
+-- ----------------------------------------------------------------------------
+-- 7. SUPPORT_TICKETS: Pilgrim customer support messages & admin responses
+-- ----------------------------------------------------------------------------
+CREATE TABLE SUPPORT_TICKETS (
+    ticket_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    attendee_id INTEGER NOT NULL,
+    category    TEXT NOT NULL CHECK (category IN ('Transport / Bus', 'Accommodation / Tent', 'Schedule / Itinerary', 'Medical / Urgent', 'General Inquiry')),
+    priority    TEXT NOT NULL DEFAULT 'normal' CHECK (priority IN ('normal', 'urgent')),
+    subject     TEXT NOT NULL,
+    message     TEXT NOT NULL,
+    status      TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'in_progress', 'resolved')),
+    admin_reply TEXT,
+    created_at  TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (attendee_id) REFERENCES ATTENDEES(attendee_id) ON DELETE CASCADE
+);
+
 -- Performance indexes for frequent search and foreign-key lookups
-CREATE INDEX idx_buses_driver_id    ON BUSES(driver_id);
-CREATE INDEX idx_attendees_bus_id   ON ATTENDEES(bus_id);
-CREATE INDEX idx_attendees_tent_id  ON ATTENDEES(tent_id);
-CREATE INDEX idx_attendees_fullname ON ATTENDEES(full_name);
-CREATE INDEX idx_itineraries_bus_id ON ITINERARIES(bus_id);
+CREATE INDEX idx_buses_driver_id       ON BUSES(driver_id);
+CREATE INDEX idx_attendees_bus_id      ON ATTENDEES(bus_id);
+CREATE INDEX idx_attendees_tent_id     ON ATTENDEES(tent_id);
+CREATE INDEX idx_attendees_fullname    ON ATTENDEES(full_name);
+CREATE INDEX idx_itineraries_bus_id    ON ITINERARIES(bus_id);
+CREATE INDEX idx_support_attendee_id   ON SUPPORT_TICKETS(attendee_id);
+CREATE INDEX idx_support_status        ON SUPPORT_TICKETS(status);

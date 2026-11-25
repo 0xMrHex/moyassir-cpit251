@@ -1,6 +1,6 @@
 # Entity-Relationship Diagram (ERD) & Data Dictionary
 
-The relational schema consists of **6 normalized (3NF) tables** implemented in **SQLite 3 via PHP PDO** (`sql/schema.sql`) with `PRAGMA foreign_keys = ON`.
+The relational schema consists of **7 normalized (3NF) tables** implemented in **SQLite 3 via PHP PDO** (`sql/schema.sql`) with `PRAGMA foreign_keys = ON`.
 
 ```mermaid
 erDiagram
@@ -10,6 +10,7 @@ erDiagram
     BUSES ||--o{ ATTENDEES : "transports (1:N)"
     TENTS ||--o{ ATTENDEES : "accommodates (1:N)"
     BUSES ||--o{ ITINERARIES : "follows schedule (1:N)"
+    ATTENDEES ||--o{ SUPPORT_TICKETS : "submits ticket (1:N)"
 
     USERS {
         INTEGER user_id PK "AUTOINCREMENT"
@@ -64,6 +65,17 @@ erDiagram
         TEXT description "NOT NULL"
         INTEGER bus_id FK "NOT NULL -> BUSES"
     }
+
+    SUPPORT_TICKETS {
+        INTEGER ticket_id PK "AUTOINCREMENT"
+        INTEGER attendee_id FK "NOT NULL -> ATTENDEES"
+        TEXT category "NOT NULL"
+        TEXT priority "NOT NULL ('normal' | 'urgent')"
+        TEXT subject "NOT NULL"
+        TEXT message "NOT NULL"
+        TEXT status "NOT NULL ('open' | 'in_progress' | 'resolved')"
+        TEXT admin_reply "NULLABLE"
+    }
 ```
 
 ## Cardinality & Referential Integrity Rules
@@ -72,3 +84,4 @@ erDiagram
 3. **`BUSES` & `DRIVERS` Service Status:** Both tables enforce `CHECK (status IN ('active', 'out_of_service'))`. Out-of-service drivers cannot be assigned to buses, and out-of-service buses block new passenger allocations while alerting both drivers and attendees.
 4. **`BUSES` / `TENTS` (1) ↔ (0..N) `ATTENDEES`:** Enforced via server-side capacity checks against `max_capacity`.
 5. **`BUSES` (1) ↔ (0..N) `ITINERARIES`:** Each bus carries scheduled itinerary events displayed live on both the Driver Portal and Attendee Portal (`ON DELETE CASCADE`).
+6. **`ATTENDEES` (1) ↔ (0..N) `SUPPORT_TICKETS`:** Pilgrims submit structured customer support messages linked via `attendee_id` (`ON DELETE CASCADE`), allowing Campaign Administrators to inspect assigned bus/tent context, update status, and post official replies without data duplication.

@@ -33,7 +33,7 @@ Tap any document below to view it directly on GitHub:
 | 04 | **UI Wireframes (9 Responsive Screens)** | [04_UI_Wireframes.pdf](docs/pdf/04_UI_Wireframes.pdf) |
 | 05 | **Presentation & 5-Minute Live Demo Playbook** | [05_Presentation_and_Live_Demo_Playbook.pdf](docs/pdf/05_Presentation_and_Live_Demo_Playbook.pdf) |
 | 06 | **Supporting Evidence Pack (Nusuk, GASTAT, Literature)** | [06_Supporting_Evidence_Pack.pdf](docs/pdf/06_Supporting_Evidence_Pack.pdf) |
-| 07 | **Testing Cases & 17/17 Automated Results** | [07_Testing_Cases_and_Results.pdf](docs/pdf/07_Testing_Cases_and_Results.pdf) |
+| 07 | **Testing Cases & 20/20 Automated Results** | [07_Testing_Cases_and_Results.pdf](docs/pdf/07_Testing_Cases_and_Results.pdf) |
 | 08 | **Presentation Slide Deck (16:9 PDF)** | [08_Moyassir_Presentation_Slides.pdf](docs/pdf/08_Moyassir_Presentation_Slides.pdf) |
 | PPTX | **Editable PowerPoint Presentation** | [Moyassir_CPIT251_Presentation.pptx](Moyassir_CPIT251_Presentation.pptx) |
 
@@ -43,9 +43,9 @@ Tap any document below to view it directly on GitHub:
 
 **Moyassir (ميسر)** is a centralized, role-based web application built with **PHP 8.2** and **SQLite 3 (via PHP PDO)** that transitions domestic Hajj & Umrah campaign operators from fragmented Excel sheets, paper lists, and scattered WhatsApp broadcasts to a normalized (3NF) relational single source of truth.
 
-* **Campaign Managers (Admins):** Manage attendee registrations (atomic `USERS` + `ATTENDEES` creation), add/remove bus drivers, assign drivers `1:1` to buses, toggle `Active` / `Out of Service` fleet status, allocate buses & tents with strict server-side capacity guards, publish itineraries, search/filter records, and export printable manifests (PDF / CSV).
+* **Campaign Managers (Admins):** Manage attendee registrations (atomic `USERS` + `ATTENDEES` creation), add/remove bus drivers, assign drivers `1:1` to buses, toggle `Active` / `Out of Service` fleet status, allocate buses & tents with strict server-side capacity guards, publish itineraries, review & reply to **Pilgrim Customer Support** messages, search/filter records, and export printable manifests (PDF / CSV).
 * **Bus Drivers:** Sign into a dedicated read-only **Driver Portal** to view their service status, assigned bus & live seat load, chronological itinerary milestones, and passenger boarding checklist.
-* **Attendees (Pilgrims):** Sign into a mobile-friendly read-only **Pilgrim Pass Portal** to view their personal pass, assigned bus & driver phone number, Mina/Makkah tent zone, and live campaign schedule.
+* **Attendees (Pilgrims):** Sign into a mobile-friendly **Pilgrim Pass Portal** to view their personal pass, assigned bus & driver phone number, Mina/Makkah tent zone, and live campaign schedule, or tap **Contact Customer Support** to message Campaign Administration directly and track official replies.
 
 ---
 
@@ -54,6 +54,10 @@ Tap any document below to view it directly on GitHub:
 | Admin Dashboard | Full-Bus Capacity Guard (`5/5`) |
 |---|---|
 | ![Admin Dashboard](docs/testing/screenshots/02_admin_dashboard.png) | ![Capacity Alert](docs/testing/screenshots/03_bus_full_capacity_alert.png) |
+
+| Pilgrim Customer Support Form | Admin Customer Support Inbox |
+|---|---|
+| ![Pilgrim Support](docs/testing/screenshots/08_pilgrim_customer_support.png) | ![Admin Support Inbox](docs/testing/screenshots/09_admin_support_inbox.png) |
 
 | Bus Drivers & Service Control | Bus Driver Schedule Portal |
 |---|---|
@@ -82,7 +86,7 @@ Then open **`http://127.0.0.1:8088`** in your browser.
 docker build -t moyassir . && docker run --rm -p 8088:8088 moyassir
 ```
 
-### Run the 17-Case Automated Verification Suite
+### Run the 20-Case Automated Verification Suite
 ```bash
 php src/tests/run_automated_tests.php http://127.0.0.1:8088
 ```
@@ -97,7 +101,7 @@ php src/tests/run_automated_tests.php http://127.0.0.1:8088
 
 ---
 
-## Product Backlog (8 Core Functions — Exceeds Minimum 4)
+## Product Backlog (9 Core Functions — Exceeds Minimum 4)
 
 | ID | Role | Core Function | Sprint |
 |---|---|---|---|
@@ -105,10 +109,11 @@ php src/tests/run_automated_tests.php http://127.0.0.1:8088
 | **US-02** | Admin | Attendee CRUD with Atomic Portal Account Creation | Sprint 2 |
 | **US-03** | Admin | Bus & Tent Allocation with Server-Side Capacity & Status Guards | Sprint 2 |
 | **US-04** | Admin | Multi-Criteria SQL Search & Filtering | Sprint 3 |
-| **US-05** | Attendee | Mobile-Responsive Read-Only Pilgrim Pass Portal | Sprint 3 |
+| **US-05** | Attendee | Mobile-Responsive Pilgrim Pass Portal | Sprint 3 |
 | **US-06** | Admin | Printable Bus Manifests & Tent Rosters (`@media print` PDF & CSV) | Sprint 3 |
 | **US-07** | Admin | Buses, Tents & Live Itinerary Schedule Management | Sprint 3 |
 | **US-08** | Admin / Driver | Bus Driver CRUD, `1:1` Bus Dispatch, `Out of Service` Control & Driver Portal | Sprint 4 |
+| **US-09** | Attendee / Admin | Pilgrim Customer Support Form & Admin Support Inbox with Official Replies | Sprint 4 |
 
 ---
 
@@ -118,7 +123,7 @@ php src/tests/run_automated_tests.php http://127.0.0.1:8088
 moyassir-cpit251/
 ├── README.md
 ├── Dockerfile                         # Optional 1-command PHP 8.2 + SQLite container
-├── Moyassir_CPIT251_Presentation.pptx # 12-Slide Editable PowerPoint Deck
+├── Moyassir_CPIT251_Presentation.pptx # 12-Slide Editable PowerPoint Deck (with QR Code)
 ├── docs/
 │   ├── FINAL_PROJECT_REPORT.md        # Complete Chapters 1–7 + References & Appendices
 │   ├── PRESENTATION_AND_DEMO.md       # 12-Slide Deck Outline + 5-Min Live Demo Script
@@ -126,16 +131,16 @@ moyassir-cpit251/
 │   ├── sprints/                       # Sprint 0–4 Execution Previews & Reviews
 │   ├── evidence/                      # Nusuk Analysis, GASTAT Open Data & Literature Review
 │   ├── diagrams/                      # Wireframes, Screen Flow, ERD, DFD, Class & Deployment
-│   └── testing/                       # 17 Test Cases, Automated Results & 7 UI Screenshots
+│   └── testing/                       # 20 Test Cases, Automated Results & 9 UI Screenshots
 ├── sql/
-│   ├── schema.sql                     # 6-Table 3NF SQLite 3 DDL (PK, FK, UNIQUE, CHECK, Indexes)
-│   └── seed.sql                       # Seed Data (1 Admin, 3 Drivers, 12 Pilgrims, 3 Buses, 3 Tents)
+│   ├── schema.sql                     # 7-Table 3NF SQLite 3 DDL (PK, FK, UNIQUE, CHECK, Indexes)
+│   └── seed.sql                       # Seed Data (Admin, Drivers, Pilgrims, Buses, Tents, Tickets)
 └── src/
     ├── config/db.php                  # SQLite 3 PDO Configuration
-    ├── classes/                       # OOP PHP Models (Database, User, Driver, Attendee, Bus, Tent, Itinerary, ReportGenerator)
+    ├── classes/                       # 9 OOP PHP Models (Database, User, Driver, Attendee, Bus, Tent, Itinerary, SupportTicket, ReportGenerator)
     ├── includes/                      # Session RBAC Guards, CSRF Helpers, Header & Footer
     ├── assets/css/style.css           # Responsive Styling + Print Manifest Layout
-    ├── admin/                         # Admin Dashboard, Attendee CRUD, Allocation, Drivers, Logistics, Reports
-    ├── tests/run_automated_tests.php  # Automated HTTP Verification (17 / 17 Passed)
-    └── index.php, login.php, logout.php, portal.php, driver_portal.php
+    ├── admin/                         # Admin Dashboard, Attendee CRUD, Allocation, Drivers, Logistics, Reports, Support Inbox
+    ├── tests/run_automated_tests.php  # Automated HTTP Verification (20 / 20 Passed)
+    └── index.php, login.php, logout.php, portal.php, support.php, driver_portal.php
 ```

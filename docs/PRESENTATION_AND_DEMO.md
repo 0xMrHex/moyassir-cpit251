@@ -14,15 +14,15 @@
 | **1** | **Title & Team** | Project Title, CPIT251, FCIT KAU, Prof. Mohammed J. Alhaddad, team names, IDs, and Scrum roles. | Mohammed |
 | **2** | **Problem Statement & Real-World Scale** | Fragmented Excel/paper/WhatsApp pain points + GASTAT Official Open Data (**1.83M** Hajj 1445 AH; **1.67M** Hajj 1446 AH; **166K–221K** domestic pilgrims). | Mohammed |
 | **3** | **Supporting Evidence & Nusuk Gap Analysis** | Side-by-side table: Nusuk (national permits & payments) vs. our system (internal bus manifests, driver dispatch, tent zones, capacity limits) + interview/survey takeaways. | Mohammed |
-| **4** | **Proposed Solution & 3 User Roles** | Overview of Admin Dashboard, Bus Driver Schedule Portal, and Attendee Read-Only Portal; highlight **8 core functions** (exceeding minimum 4). | Omar |
+| **4** | **Proposed Solution & 3 User Roles** | Overview of Admin Dashboard & Support Inbox, Bus Driver Schedule Portal, and Attendee Portal & Customer Support; highlight **9 core functions** (exceeding minimum 4). | Omar |
 | **5** | **Agile (Scrum) Methodology & Sprints** | Sprint 0 → Sprint 4 roadmap + Agile decision to adopt portable embedded **SQLite 3 (PDO)** for zero-config team collaboration while enforcing 3NF relational integrity. | Omar |
-| **6** | **UI Design: Wireframes & Screen Flow** | Wireframes from `01-wireframes.html` (9 screens) + `02-screen-flow.md` showing Admin, Driver, and Attendee role separation. | Saud |
-| **7** | **Database Design: ERD & 3NF Schema** | Exported ERD (`03-erd.md`) highlighting 6 normalized tables (`USERS`, `DRIVERS`, `BUSES`, `TENTS`, `ATTENDEES`, `ITINERARIES`), `PRAGMA foreign_keys = ON`, `UNIQUE(driver_id)`, and `CHECK` constraints. | Mohammed |
-| **8** | **Data Flow Diagrams (Level 0 & Level 1)** | Exported DFD (`04-dfd.md`) tracing processes `1.0`–`7.0` and data stores `D1`–`D6` across Admin, Driver, and Attendee entities. | Mohammed |
-| **9** | **System Architecture: Class & Deployment Diagrams** | Exported UML Class Diagram (`05-class-diagram.md` — 8 OOP PHP classes) + Deployment Diagram (`06-deployment-diagram.md`: Browser → Apache/PHP 8.2 + PDO → SQLite 3). | Omar |
+| **6** | **UI Design: Wireframes & Screen Flow** | Wireframes from `01-wireframes.html` (11 screens) + `02-screen-flow.md` showing Admin, Driver, and Attendee role separation & Customer Support flow. | Saud |
+| **7** | **Database Design: ERD & 3NF Schema** | Exported ERD (`03-erd.md`) highlighting 7 normalized tables (`USERS`, `DRIVERS`, `BUSES`, `TENTS`, `ATTENDEES`, `ITINERARIES`, `SUPPORT_TICKETS`), `PRAGMA foreign_keys = ON`, `UNIQUE(driver_id)`, and `CHECK` constraints. | Mohammed |
+| **8** | **Data Flow Diagrams (Level 0 & Level 1)** | Exported DFD (`04-dfd.md`) tracing processes `1.0`–`8.0` and data stores `D1`–`D7` across Admin, Driver, and Attendee entities. | Mohammed |
+| **9** | **System Architecture: Class & Deployment Diagrams** | Exported UML Class Diagram (`05-class-diagram.md` — 9 OOP PHP classes) + Deployment Diagram (`06-deployment-diagram.md`: Browser → Apache/PHP 8.2 + PDO → SQLite 3). | Omar |
 | **10** | **Implementation Highlights (Security & Business Rules)** | Code snippets: PDO prepared statements (`bindValue`), `password_hash()`/`password_verify()`, CSRF tokens, capacity validation, and Out-of-Service enforcement. | Omar |
-| **11** | **Testing & Validation Results** | **17/17 Test Cases PASSED** summary table + live screenshots (`02_admin_dashboard.png`, `03_bus_full_capacity_alert.png`, `06_admin_drivers.png`, `07_driver_portal.png`). | Saud |
-| **12** | **Live Demo Transition & Conclusion** | Switch to browser for 5-minute live demo → Wrap up with Future Work (QR boarding, SMS/WhatsApp alerts, Arabic RTL). | Saud (Demo) + All |
+| **11** | **Testing & Validation Results** | **20/20 Test Cases PASSED** summary + live screenshots (`02_admin_dashboard.png`, `03_bus_full_capacity_alert.png`, `08_pilgrim_customer_support.png`, `09_admin_support_inbox.png`). | Saud |
+| **12** | **Live Demo, Future Work & GitHub QR Code** | Switch to browser for 5-minute live demo → Invite audience to scan the **GitHub QR code** (`github.com/0xMrHex/moyassir-cpit251`) → Wrap up with Future Work. | Saud (Demo) + All |
 
 ---
 
@@ -49,10 +49,11 @@
 4. **[2:45–3:45] Bus Driver Schedule Portal (Saud):**
    * Sign out → Log in as **Bus Driver** (`driver1` / `Driver@2026`).
    * Show `driver_portal.php`: Driver status (`ACTIVE`), assigned `BUS-101` (`5/5 seats`), 3-step itinerary timeline, and passenger boarding checklist.
-5. **[3:45–5:00] Attendee Read-Only Portal & RBAC Proof (Saud):**
+5. **[3:45–5:00] Pilgrim Pass, Customer Support & RBAC Proof (Saud):**
    * Sign out → Log in as the **Attendee** (`1099887766` / `Pilgrim@2026`).
    * Show their mobile-friendly Pilgrim Pass (`BUS-102`, `TENT-B02`, driver phone, and live schedule).
-   * Type `http://127.0.0.1:8088/admin/dashboard.php` in the address bar → Prove RBAC redirects them back to `/portal.php` with **Access Denied**!
+   * Click **Contact Customer Support** → Submit a live message to Campaign Admin, then quickly show it arriving in `/admin/support.php`!
+   * Type `http://127.0.0.1:8088/admin/dashboard.php` as the Attendee → Prove RBAC redirects them back to `/portal.php` with **Access Denied**!
 
 ---
 

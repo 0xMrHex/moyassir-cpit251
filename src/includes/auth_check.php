@@ -16,6 +16,7 @@ require_once dirname(__DIR__) . '/classes/Bus.php';
 require_once dirname(__DIR__) . '/classes/Tent.php';
 require_once dirname(__DIR__) . '/classes/Attendee.php';
 require_once dirname(__DIR__) . '/classes/Itinerary.php';
+require_once dirname(__DIR__) . '/classes/SupportTicket.php';
 require_once dirname(__DIR__) . '/classes/ReportGenerator.php';
 
 function e(?string $value): string

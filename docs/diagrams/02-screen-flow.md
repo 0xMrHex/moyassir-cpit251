@@ -23,6 +23,7 @@ flowchart TD
         AdminDash --> DriversPage["Screen 4B: Bus Drivers & Service Status<br/>(admin/drivers.php)"]
         AdminDash --> Logistics["Screen 5: Buses, Tents & Itineraries<br/>(admin/logistics.php)"]
         AdminDash --> Reports["Screen 6: Manifest & Roster Reports<br/>(admin/reports.php)"]
+        AdminDash --> SupportInbox["Screen 11: Pilgrim Support Inbox<br/>(admin/support.php)"]
 
         AttendeesList --> AddEditDel["Add / Edit / Delete Attendee"]
         AddEditDel --> AttendeesList
@@ -44,8 +45,11 @@ flowchart TD
 
     subgraph AttendeeArea["Attendee Workspace (Guarded by requireAttendee())"]
         Portal --> ViewCard["View Personal Profile,<br/>Assigned Bus & Driver,<br/>Tent Zone & Live Itinerary"]
+        Portal --> PilgrimSupport["Screen 10: Customer Support Form<br/>(support.php)"]
+        PilgrimSupport --> SubmitTicket["Submit Support Ticket &<br/>View Admin Replies"]
     end
 
+    SupportInbox --> AdminReply["Reply to Pilgrim &<br/>Update Ticket Status"]
     DriverPortal -. "Attempts /admin/*" .-> AccessDeniedD["Redirect to driver_portal.php"]
     Portal -. "Attempts /admin/*" .-> AccessDeniedA["Redirect to portal.php"]
     AdminDash --> Logout["Logout (logout.php)<br/>Destroy Session"]
@@ -58,6 +62,6 @@ flowchart TD
 | Screen / Route | Guest | Attendee | Driver | Admin |
 |---|---|---|---|---|
 | `/login.php` | Allowed | Redirects to `portal.php` | Redirects to `driver_portal.php` | Redirects to `admin/dashboard.php` |
-| `/portal.php` | Redirects to `login.php` | **Allowed (Read-Only)** | Redirects to `driver_portal.php` | Redirects to `admin/dashboard.php` |
+| `/portal.php` & `/support.php` | Redirects to `login.php` | **Allowed (Pass + Customer Support)** | Redirects to `driver_portal.php` | Redirects to `admin/dashboard.php` |
 | `/driver_portal.php` | Redirects to `login.php` | **Blocked** | **Allowed (Read-Only)** | **Blocked** |
-| `/admin/*` (Dashboard, Attendees, Allocate, Drivers, Logistics, Reports) | Redirects to `login.php` | **Blocked** | **Blocked** | **Allowed** |
+| `/admin/*` (Dashboard, Attendees, Allocate, Drivers, Logistics, Reports, Support) | Redirects to `login.php` | **Blocked** | **Blocked** | **Allowed** |

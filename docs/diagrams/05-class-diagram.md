@@ -1,6 +1,6 @@
 # UML Class Diagram — PHP Backend Architecture
 
-Models all **8 Object-Oriented PHP classes** implemented in `src/classes/`, matching exact properties, method signatures, and associations.
+Models all **9 Object-Oriented PHP classes** implemented in `src/classes/`, matching exact properties, method signatures, and associations.
 
 ```mermaid
 classDiagram
@@ -89,6 +89,17 @@ classDiagram
         +delete(int itineraryId) bool
     }
 
+    class SupportTicket {
+        -Database db
+        +create(int attendeeId, array data) array
+        +getByAttendeeId(int attendeeId) array
+        +getAll(string statusFilter, string priorityFilter) array
+        +findById(int ticketId) array
+        +respond(int ticketId, string status, string adminReply) array
+        +delete(int ticketId) bool
+        +countActive() int
+    }
+
     class ReportGenerator {
         -Database db
         +getBusManifest(int busId) array
@@ -109,8 +120,11 @@ classDiagram
     Tent --> Database : uses
     Itinerary --> Database : uses
     Itinerary --> Bus : linked to bus_id
+    SupportTicket --> Database : uses
+    SupportTicket --> Attendee : linked to attendee_id
     ReportGenerator --> Database : aggregates
     ReportGenerator --> Bus : reads manifest
     ReportGenerator --> Tent : reads roster
     ReportGenerator --> Attendee : lists occupants
+    ReportGenerator --> SupportTicket : counts tickets
 ```

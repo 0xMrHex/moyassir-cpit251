@@ -405,6 +405,71 @@ try {
         $pass ? 'Logistics update blocked Out-of-Service driver assignment and enforced 1:1 driver-to-bus uniqueness.' : 'Logistics OOS driver guard failed');
 
     // -------------------------------------------------------------------------
+    // TC-18: Pilgrim Customer Support Button & Message Submission -> Sent to Admin
+    // -------------------------------------------------------------------------
+    $attPortalBtn = httpRequest("{$baseUrl}/portal.php", $attendeeCookie);
+    $supFormPage  = httpRequest("{$baseUrl}/support.php", $attendeeCookie);
+    $supCsrf      = extractCsrf($supFormPage['body']);
+    $supPost      = httpRequest("{$baseUrl}/support.php", $attendeeCookie, [
+        'csrf_token' => $supCsrf,
+        'category'   => 'Transport / Bus',
+        'priority'   => 'urgent',
+        'subject'    => 'Assembly Gate Landmark for BUS-102',
+        'message'    => 'Please confirm the exact Gate 3 pickup landmark for BUS-102 departure.',
+    ]);
+    $supAfterPost = httpRequest("{$baseUrl}/support.php", $attendeeCookie);
+    $newTicketId  = 0;
+    if (preg_match('/Ticket #(\d+)<\/strong>.*?Assembly Gate Landmark for BUS-102/s', $supAfterPost['body'], $m)) {
+        $newTicketId = (int) $m[1];
+    }
+    $pass = (str_contains($attPortalBtn['body'], 'Contact Customer Support')
+        && $supPost['status'] === 302
+        && $newTicketId > 0
+        && str_contains($supAfterPost['body'], 'sent directly to Campaign Administration'));
+    recordTest($results, 'TC-18', 'Pilgrim Customer Support Submit', $pass,
+        $pass ? "Pilgrim opened Customer Support from portal and submitted Ticket #{$newTicketId} to Admin." : 'Failed to submit pilgrim support ticket');
+
+    // -------------------------------------------------------------------------
+    // TC-19: Admin Support Inbox Review, Reply & Live Pilgrim Status Sync
+    // -------------------------------------------------------------------------
+    $admSupPage = httpRequest("{$baseUrl}/admin/support.php", $adminCookie);
+    $admSupCsrf = extractCsrf($admSupPage['body']);
+    $admReplyPost = httpRequest("{$baseUrl}/admin/support.php", $adminCookie, [
+        'csrf_token'  => $admSupCsrf,
+        'action'      => 'respond',
+        'ticket_id'   => (string) $newTicketId,
+        'status'      => 'resolved',
+        'admin_reply' => 'Meet Driver Fahad Al-Ghamdi beside Green Pillar 3B at 06:50 AM.',
+    ]);
+    $attSupSynced = httpRequest("{$baseUrl}/support.php", $attendeeCookie);
+    $pass = (str_contains($admSupPage['body'], 'Assembly Gate Landmark for BUS-102')
+        && str_contains($admSupPage['body'], 'Reem Khalid Al-Juhani')
+        && $admReplyPost['status'] === 302
+        && str_contains($attSupSynced['body'], 'Green Pillar 3B at 06:50 AM')
+        && str_contains($attSupSynced['body'], 'RESOLVED'));
+    recordTest($results, 'TC-19', 'Admin Support Inbox & Reply Sync', $pass,
+        $pass ? "Admin received Ticket #{$newTicketId}, sent official reply, and Pilgrim immediately saw RESOLVED response." : 'Admin reply or pilgrim sync failed');
+
+    // -------------------------------------------------------------------------
+    // TC-20: Support Inbox RBAC Protection & Clean Test Ticket Removal
+    // -------------------------------------------------------------------------
+    $attBlockedSup = httpRequest("{$baseUrl}/admin/support.php", $attendeeCookie);
+    $admSupClean   = httpRequest("{$baseUrl}/admin/support.php", $adminCookie);
+    $delSupCsrf    = extractCsrf($admSupClean['body']);
+    $delSupPost    = httpRequest("{$baseUrl}/admin/support.php", $adminCookie, [
+        'csrf_token' => $delSupCsrf,
+        'action'     => 'delete_ticket',
+        'ticket_id'  => (string) $newTicketId,
+    ]);
+    $admAfterDel = httpRequest("{$baseUrl}/admin/support.php", $adminCookie);
+    $pass = ($attBlockedSup['status'] === 302
+        && str_contains($attBlockedSup['redirect'], '/portal.php')
+        && $delSupPost['status'] === 302
+        && !str_contains($admAfterDel['body'], 'Assembly Gate Landmark for BUS-102'));
+    recordTest($results, 'TC-20', 'Support RBAC & Ticket Cleanup', $pass,
+        $pass ? "Attendee blocked from /admin/support.php (HTTP 302) and test Ticket #{$newTicketId} cleaned up." : 'Support RBAC or cleanup failed');
+
+    // -------------------------------------------------------------------------
     // TC-12: Logout & Session Invalidation -> Protected routes redirect to login
     // -------------------------------------------------------------------------
     $logoutRes = httpRequest("{$baseUrl}/logout.php", $adminCookie);

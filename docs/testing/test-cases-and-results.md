@@ -1,12 +1,12 @@
 # Functional Testing Evidence & Results (Sprint 4)
 
-**Test Date:** 2026-11-25  
-**Test Environment:** PHP 8.2.12 + SQLite 3 PDO (`C:\xampp\php\php.exe -S 127.0.0.1:8088 -t src`), Automated HTTP Suite (`src/tests/run_automated_tests.php`), and Live Chromium Browser Inspection  
-**Overall Result:** **17 / 17 PASSED (100%)** — Zero PHP syntax warnings across all 25 PHP files; zero UI layout or clipping defects.
+**Test Date:** 2026-11-26  
+**Test Environment:** PHP 8.2.12 + SQLite 3 PDO (`C:\xampp\php\php.exe -S 0.0.0.0:8088 -t src`), Automated HTTP Suite (`src/tests/run_automated_tests.php`), and Live Chromium Browser Inspection  
+**Overall Result:** **20 / 20 PASSED (100%)** — Zero PHP syntax warnings across all 30 PHP files; zero UI layout or clipping defects.
 
 ---
 
-## 1. Completed Functional Test Case Table (TC-01 to TC-17)
+## 1. Completed Functional Test Case Table (TC-01 to TC-20)
 
 | Test ID | Feature | Input / Action | Expected Result | Actual Result | Status |
 |---|---|---|---|---|---|
@@ -27,28 +27,33 @@
 | **TC-15** | Out of Service Enforcement | Admin toggles `BUS-201` to `out_of_service`; check Driver Portal & try allocating an attendee | Driver alerted; passenger allocation rejected | Driver Portal showed `OUT OF SERVICE` alert; allocation blocked with `"Bus out of service"`; restored cleanly | **PASS** |
 | **TC-16** | Driver Status Toggle & Removal | Admin toggles `driver4` to `out_of_service`, then removes `driver4` | Status updated to `OUT OF SERVICE`, then removed cleanly (`ON DELETE CASCADE`/`SET NULL`) | Status badge verified; driver `#4` removed & `BUS-201` restored | **PASS** |
 | **TC-17** | Logistics OOS & Unique Driver Guard | On `/admin/logistics.php`, try assigning an `Out of Service` driver to `BUS-201` | Rejected with error; enforces 1:0..1 `UNIQUE(driver_id)` | Blocked with `"Out of Service and cannot be assigned to a bus"` alert | **PASS** |
+| **TC-18** | Pilgrim Customer Support Submit | Pilgrim clicks `Contact Customer Support` on `/portal.php` and submits urgent message on `/support.php` | Saved in `SUPPORT_TICKETS` (`status=open`) and delivered to Admin | Ticket `#3` created with flash confirmation & shown under Pilgrim requests (`08_pilgrim_customer_support.png`) | **PASS** |
+| **TC-19** | Admin Support Inbox & Reply Sync | Admin opens `/admin/support.php`, posts official reply, and sets status to `resolved` | Reply saved & Pilgrim immediately sees `RESOLVED` + Admin response | Admin reply persisted (`09_admin_support_inbox.png`); Pilgrim `/support.php` immediately rendered `RESOLVED` & reply | **PASS** |
+| **TC-20** | Support RBAC & Ticket Cleanup | Attendee attempts `/admin/support.php`; Admin deletes temporary test ticket `#3` | Attendee blocked (`HTTP 302` to `/portal.php`); test ticket removed cleanly | RBAC redirect verified; test ticket `#3` removed cleanly | **PASS** |
 
 ---
 
-## 2. Captured Live Visual Evidence (7 Screenshots)
+## 2. Captured Live Visual Evidence (9 Screenshots)
 
 All screenshots were captured live from the running PHP 8.2 + SQLite 3 application and stored in `docs/testing/screenshots/`:
 
 1. **`01_login_invalid_alert.png`** — TC-02 invalid login rejection alert on `/login.php`
-2. **`02_admin_dashboard.png`** — TC-01 Admin Operations Dashboard showing KPIs, Bus Fleet Occupancy (`BUS-101` FULL), and Tent Occupancy (`TENT-A01` FULL)
+2. **`02_admin_dashboard.png`** — TC-01 Admin Operations Dashboard showing KPIs, Support Inbox counter, Bus Fleet Occupancy (`BUS-101` FULL), and Tent Occupancy (`TENT-A01` FULL)
 3. **`03_bus_full_capacity_alert.png`** — TC-05 server-side overbooking prevention alert on `/admin/allocate.php`
 4. **`04_printable_bus_manifest.png`** — TC-08 official printable `BUS-101` Passenger List with ground-staff boarding check columns
-5. **`05_attendee_portal.png`** — TC-07 Attendee Read-Only Portal (`Abdullah Nasser Al-Qahtani`) showing assigned bus, driver contact, Mina tent zone, and live itinerary
+5. **`05_attendee_portal.png`** — TC-07 Attendee Portal (`Abdullah Nasser Al-Qahtani`) showing `Contact Customer Support` button, assigned bus, driver contact, Mina tent zone, and live itinerary
 6. **`06_admin_drivers.png`** — TC-13 Admin Bus Drivers Management (`/admin/drivers.php`) showing driver assignments and Bus Fleet Service Status controls
 7. **`07_driver_portal.png`** — TC-14 Bus Driver Schedule Portal (`/driver_portal.php` as `driver1`) showing `BUS-101`, itinerary schedule, and 5-pilgrim boarding list
+8. **`08_pilgrim_customer_support.png`** — TC-18 Pilgrim Customer Support Form (`/support.php`) with auto-linked logistics metadata and Admin reply history
+9. **`09_admin_support_inbox.png`** — TC-19 Admin Customer Support Inbox (`/admin/support.php`) showing active/urgent KPIs, Pilgrim logistics bar, and Admin Reply controls
 
 ---
 
 ## 3. Reproducing the Automated Test Suite
 ```powershell
 # Terminal 1: Start local PHP server
-& 'C:\xampp\php\php.exe' -S 127.0.0.1:8088 -t 'cpit251-hajj-umrah\src'
+& 'C:\xampp\php\php.exe' -S 0.0.0.0:8088 -t 'cpit251-hajj-umrah\src'
 
-# Terminal 2: Execute all 17 functional test cases
+# Terminal 2: Execute all 20 functional test cases
 & 'C:\xampp\php\php.exe' 'cpit251-hajj-umrah\src\tests\run_automated_tests.php' 'http://127.0.0.1:8088'
 ```

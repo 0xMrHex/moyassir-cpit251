@@ -10,14 +10,14 @@ flowchart LR
     Attendee["External Entity:<br/>Attendee (Pilgrim)"]
     System(("0.0<br/>Moyassir System<br/>(Hajj & Umrah Logistics)"))
 
-    Admin -- "Credentials, Attendee CRUD,<br/>Driver Management & Service Status,<br/>Allocations, Schedules, Report Requests" --> System
-    System -- "Dashboard KPIs, Capacity & Status Alerts,<br/>Filtered Lists, Printable Manifests & CSV" --> Admin
+    Admin -- "Credentials, Attendee CRUD,<br/>Driver Management & Service Status,<br/>Allocations, Schedules, Support Replies" --> System
+    System -- "Dashboard KPIs, Capacity & Status Alerts,<br/>Support Inbox, Printable Manifests & CSV" --> Admin
 
     Driver -- "Driver Login Credentials" --> System
     System -- "Assigned Bus Details, Service Status,<br/>Bus Schedule & Passenger Manifest" --> Driver
 
-    Attendee -- "Attendee Login Credentials<br/>(National ID + Password)" --> System
-    System -- "Read-Only Personal Card:<br/>Bus, Driver, Tent Zone & Live Itinerary" --> Attendee
+    Attendee -- "Attendee Login & Customer Support Messages" --> System
+    System -- "Personal Pass (Bus, Driver, Tent, Itinerary)<br/>& Admin Support Replies" --> Attendee
 ```
 
 ---
@@ -37,6 +37,7 @@ flowchart TD
     P5(("5.0<br/>Generate Manifests<br/>& CSV Reports"))
     P6(("6.0<br/>Serve Attendee<br/>Portal"))
     P7(("7.0<br/>Serve Driver<br/>Schedule Portal"))
+    P8(("8.0<br/>Manage Pilgrim<br/>Customer Support"))
 
     D1[("D1: USERS")]
     D2[("D2: ATTENDEES")]
@@ -44,6 +45,7 @@ flowchart TD
     D4[("D4: TENTS")]
     D5[("D5: ITINERARIES")]
     D6[("D6: DRIVERS")]
+    D7[("D7: SUPPORT_TICKETS")]
 
     Admin --> P1
     Driver --> P1
@@ -84,4 +86,9 @@ flowchart TD
     D3 --> P7
     D5 --> P7
     D2 --> P7
+
+    Attendee <--> P8
+    Admin <--> P8
+    P8 <--> D7
+    D2 --> P8
 ```

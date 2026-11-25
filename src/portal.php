@@ -6,11 +6,13 @@ requireAttendee();
 $db             = Database::getInstance();
 $attModel       = new Attendee($db);
 $itineraryModel = new Itinerary($db);
+$supportModel   = new SupportTicket($db);
 
 $attendee = $attModel->findByUserId((int) $_SESSION['user_id']);
 $itineraries = ($attendee && !empty($attendee['bus_id']))
     ? $itineraryModel->getByBusId((int) $attendee['bus_id'])
     : [];
+$myTickets = $attendee ? $supportModel->getByAttendeeId((int) $attendee['attendee_id']) : [];
 
 $pageTitle = 'My Pilgrim Portal';
 $activeNav = 'portal';
@@ -23,14 +25,21 @@ require_once __DIR__ . '/includes/header.php';
     $busOos = ($attendee['bus_status'] ?? 'active') === 'out_of_service';
 ?>
     <div class="portal-hero">
-        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.85;">
-            Read-Only Pilgrim Logistics Pass &bull; <?= e($attendee['campaign_type']) ?> Campaign
-        </div>
-        <h1><?= e($attendee['full_name']) ?></h1>
-        <div class="portal-meta">
-            <span>National ID: <strong><?= e($attendee['national_id']) ?></strong></span>
-            <span>Mobile: <strong><?= e($attendee['phone']) ?></strong></span>
-            <span>Attendee #: <strong>#<?= (int) $attendee['attendee_id'] ?></strong></span>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+            <div>
+                <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.85;">
+                    Pilgrim Logistics Pass &bull; <?= e($attendee['campaign_type']) ?> Campaign
+                </div>
+                <h1><?= e($attendee['full_name']) ?></h1>
+                <div class="portal-meta">
+                    <span>National ID: <strong><?= e($attendee['national_id']) ?></strong></span>
+                    <span>Mobile: <strong><?= e($attendee['phone']) ?></strong></span>
+                    <span>Attendee #: <strong>#<?= (int) $attendee['attendee_id'] ?></strong></span>
+                </div>
+            </div>
+            <a href="/support.php#support-form" class="btn btn-hero-support no-print">
+                Contact Customer Support &rarr;
+            </a>
         </div>
     </div>
 
@@ -118,6 +127,21 @@ require_once __DIR__ . '/includes/header.php';
                 <?php endforeach; ?>
             </ul>
         <?php endif; ?>
+    </div>
+
+    <div class="card support-cta-card no-print">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+            <div>
+                <h2 style="margin:0 0 4px;">Need Help? Campaign Customer Support</h2>
+                <p style="margin:0;color:var(--muted);font-size:13.5px;">
+                    Have an issue with your bus, tent zone, departure schedule, or need urgent field assistance? Send a direct message to Campaign Administration.
+                    <?php if (!empty($myTickets)): ?>
+                        <br><strong>You have <?= count($myTickets) ?> support <?= count($myTickets) === 1 ? 'request' : 'requests' ?> on file.</strong>
+                    <?php endif; ?>
+                </p>
+            </div>
+            <a href="/support.php#support-form" class="btn">Contact Customer Support</a>
+        </div>
     </div>
 <?php endif; ?>
 
