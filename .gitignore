@@ -1,0 +1,13 @@
+# Microsoft Office lock & temporary files
+~$*
+*.tmp
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Runtime SQLite database & journal files (auto-created & seeded from sql/schema.sql + sql/seed.sql)
+data/*.sqlite
+data/*.sqlite-journal
+data/*.sqlite-wal
+data/*.sqlite-shm

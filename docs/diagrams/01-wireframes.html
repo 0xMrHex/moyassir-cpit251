@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPIT251 — UI Wireframes &amp; Mockups (Moyassir | ميسر)</title>
+<style>
+  * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+  body { margin: 0; padding: 32px; background: #f1f5f9; color: #0f172a; }
+  h1 { margin: 0 0 6px; font-size: 26px; }
+  .subtitle { color: #475569; margin-bottom: 28px; font-size: 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(520px, 1fr)); gap: 22px; }
+  .mobile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 22px; break-inside: avoid; }
+  .wf-card { background: #fff; border: 2px solid #cbd5e1; border-radius: 10px; overflow: hidden; break-inside: avoid; page-break-inside: avoid; }
+  .wf-head { background: #1e293b; color: #fff; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; }
+  .wf-body { padding: 16px; }
+  .wire-bar { background: #e2e8f0; border: 1px dashed #64748b; padding: 8px 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 12px; font-weight: 600; }
+  .wire-box { border: 1.5px dashed #94a3b8; background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 10px; font-size: 12px; overflow: hidden; }
+  .wire-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .wire-col { flex: 1; border: 1.5px solid #cbd5e1; background: #fff; padding: 10px; border-radius: 6px; font-size: 12px; }
+  .wire-input { border: 1.5px solid #94a3b8; background: #fff; padding: 6px 8px; border-radius: 4px; color: #64748b; margin-top: 4px; margin-bottom: 8px; font-size: 11px; }
+  .wire-btn { display: inline-block; background: #0f766e; color: #fff; padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .wire-btn.sec { background: #475569; }
+  .wire-btn.danger { background: #b91c1c; }
+  .wire-table { width: 100%; border-collapse: collapse; font-size: 11px; table-layout: auto; }
+  .wire-table th, .wire-table td { border: 1px solid #cbd5e1; padding: 5px 7px; text-align: left; }
+  .wire-table th { background: #e2e8f0; white-space: nowrap; }
+  .badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+  .badge.full { background: #fee2e2; color: #991b1b; }
+  .badge.ok { background: #dcfce7; color: #166534; }
+  .phone { max-width: 280px; margin: 0 auto; border: 3px solid #1e293b; border-radius: 22px; padding: 14px; background: #f8fafc; }
+  .caption { font-size: 11px; color: #64748b; margin-top: 8px; font-style: italic; }
+  @media print {
+    @page { size: A4; margin: 12mm; }
+    body { background: #fff; padding: 0; }
+    .grid { grid-template-columns: 1fr; gap: 16px; }
+    .mobile-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+  }
+</style>
+</head>
+<body>
+  <h1>UI Wireframes &amp; Screen Mockups — Moyassir (ميسر) Hajj &amp; Umrah System</h1>
+  <div class="subtitle">CPIT251 Software Engineering | Section IT2 | Mohammed Aljedani, Omar Alofi, Saud Faisal Almesfer</div>
+
+  <div class="grid">
+    <!-- Screen 1: Login -->
+    <div class="wf-card">
+      <div class="wf-head"><span>Screen 1: Role-Based Login</span><span>/login.php</span></div>
+      <div class="wf-body">
+        <div class="wire-box" style="max-width:300px;margin:16px auto;text-align:center;">
+          <div style="font-size:16px;font-weight:700;margin-bottom:10px;">Moyassir &bull; ميسر</div>
+          <div style="font-weight:600;margin-bottom:12px;">Campaign Logistics Sign In</div>
+          <div style="text-align:left;">
+            <label>Username / National ID</label>
+            <div class="wire-input">e.g., admin or 1098765431</div>
+            <label>Password</label>
+            <div class="wire-input">••••••••••••</div>
+            <div style="text-align:center;margin-top:10px;"><span class="wire-btn" style="width:100%;">Sign In</span></div>
+          </div>
+          <div style="margin-top:10px;font-size:10px;color:#64748b;">Error Banner Area: "Invalid username or password."</div>
+        </div>
+        <div class="caption">Single unified login screen; redirects Admin to /admin/dashboard.php and Attendee to /portal.php.</div>
+      </div>
+    </div>
+
+    <!-- Screen 2: Admin Dashboard -->
+    <div class="wf-card">
+      <div class="wf-head"><span>Screen 2: Admin Dashboard</span><span>/admin/dashboard.php</span></div>
+      <div class="wf-body">
+        <div class="wire-bar"><span>Moyassir &bull; ميسر</span><span>Dashboard | Attendees | Allocate | Drivers | Logistics | Reports | Logout</span></div>
+        <div class="wire-row">
+          <div class="wire-col"><strong>Total Attendees</strong><br><span style="font-size:20px;">12</span></div>
+          <div class="wire-col"><strong>Active Buses</strong><br><span style="font-size:20px;">3</span></div>
+          <div class="wire-col"><strong>Active Tents</strong><br><span style="font-size:20px;">3</span></div>
+          <div class="wire-col"><strong>Unassigned</strong><br><span style="font-size:20px;">0</span></div>
+        </div>
+        <div class="wire-row">
+          <div class="wire-col">
+            <strong>Bus Occupancy</strong><br>
+            BUS-101: 5/5 <span class="badge full">FULL</span><br>
+            BUS-102: 5/10 <span class="badge ok">5 FREE</span>
+          </div>
+          <div class="wire-col">
+            <strong>Tent Occupancy</strong><br>
+            TENT-A01: 6/6 <span class="badge full">FULL</span><br>
+            TENT-B02: 4/10 <span class="badge ok">6 FREE</span>
+          </div>
+        </div>
+        <div class="caption">Real-time operational overview with quick navigation and visual capacity bars.</div>
+      </div>
+    </div>
+
+    <!-- Screen 3: Attendees List & Search -->
+    <div class="wf-card">
+      <div class="wf-head"><span>Screen 3: Attendees CRUD &amp; Search/Filter</span><span>/admin/attendees.php</span></div>
+      <div class="wf-body">
+        <div class="wire-bar"><span>Registered Attendees</span><span class="wire-btn">+ Add Attendee</span></div>
+        <div class="wire-row">
+          <div class="wire-input" style="flex:2;margin:0;">Search Name / National ID / Phone...</div>
+          <div class="wire-input" style="flex:1;margin:0;">Filter: All Buses ▾</div>
+          <div class="wire-input" style="flex:1;margin:0;">Filter: All Tents ▾</div>
+          <span class="wire-btn sec">Filter</span>
+        </div>
+        <table class="wire-table">
+          <thead><tr><th>Name</th><th>National ID</th><th>Type</th><th>Bus</th><th>Tent</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td>Abdullah Al-Qahtani</td><td>1098765431</td><td>Hajj</td><td>BUS-101</td><td>TENT-A01</td><td>Edit | Allocate | Del</td></tr>
+            <tr><td>Reem Al-Juhani</td><td>1098765437</td><td>Hajj</td><td>BUS-102</td><td>TENT-B02</td><td>Edit | Allocate | Del</td></tr>
+          </tbody>
+        </table>
+        <div class="caption">Supports instant search by ID/name and dropdown filtering by bus, tent, or campaign type.</div>
+      </div>
+    </div>
+
+    <!-- Screen 4: Add / Edit Attendee -->
+    <div class="wf-card">
+      <div class="wf-head"><span>Screen 4: Add / Edit Attendee Form</span><span>/admin/add_attendee.php</span></div>
+      <div class="wf-body">
+        <div class="wire-box">
+          <div class="wire-row">
+            <div style="flex:1;"><label>Full Name *</label><div class="wire-input">e.g., Salem Al-Harthi</div></div>
+            <div style="flex:1;"><label>National ID * (Login Username)</label><div class="wire-input">10-digit ID</div></div>
+          </div>
+          <div class="wire-row">
+            <div style="flex:1;"><label>Phone *</label><div class="wire-input">05XXXXXXXX</div></div>
+            <div style="flex:1;"><label>Campaign Type</label><div class="wire-input">Hajj / Umrah ▾</div></div>
+          </div>
+          <div class="wire-row">
+            <div style="flex:1;"><label>Initial Bus (Optional)</label><div class="wire-input">BUS-102 (5/10) ▾</div></div>
+            <div style="flex:1;"><label>Initial Tent (Optional)</label><div class="wire-input">TENT-B02 (4/10) ▾</div></div>
+          </div>
+          <div class="wire-input">Portal Default Password: [Pilgrim@2026]</div>
+          <span class="wire-btn">Save Attendee &amp; Create Account</span> <span class="wire-btn sec">Cancel</span>
+        </div>
+        <div class="caption">Automatically provisions a linked USERS row so the attendee can log into the portal immediately.</div>
+      </div>
+    </div>
+
+    <!-- Screen 5: Bus & Tent Allocation -->
+    <div class="wf-card">
+      <div class="wf-head"><span>Screen 5: Bus &amp; Tent Allocation</span><span>/admin/allocate.php</span></div>
+      <div class="wf-body">
+        <div class="wire-box" style="border-color:#dc2626;background:#fef2f2;color:#991b1b;">
+          <strong>Validation Alert:</strong> Cannot assign — BUS-101 has reached maximum capacity (5/5 seats).
+        </div>
+        <div class="wire-box">
+          <label>Select Attendee</label>
+          <div class="wire-input">Reem Khalid Al-Juhani (1098765437) ▾</div>
+          <div class="wire-row">
+            <div style="flex:1;"><label>Assign Bus</label><div class="wire-input">BUS-101 (5/5 FULL) / BUS-102 (5/10) ▾</div></div>
+            <div style="flex:1;"><label>Assign Tent</label><div class="wire-input">TENT-A01 (6/6 FULL) / TENT-B02 (4/10) ▾</div></div>
+          </div>
+          <span class="wire-btn">Update Allocation</span>
+        </div>
+        <div class="caption">Server-side COUNT(*) validation blocks overbooking while exempting the attendee's own current seat.</div>
+      </div>
+    </div>
+
+    <!-- Screen 6: Printable Manifest & Roster -->
+    <div class="wf-card">
+      <div class="wf-head"><span>Screen 6: Printable Manifest / Roster</span><span>/admin/reports.php</span></div>
+      <div class="wf-body">
+        <div class="wire-bar">
+          <span>Type: [Bus Manifest ▾] Select: [BUS-101 ▾]</span>
+          <span><span class="wire-btn">Print / Save PDF</span> <span class="wire-btn sec">Export CSV</span></span>
+        </div>
+        <div class="wire-box">
+          <strong>BUS-101 PASSENGER MANIFEST</strong><br>
+          Driver: Khalid Al-Harbi (0501122334) | Departure: 8 Dhul-Hijjah 06:30 AM | Load: 5 / 5
+          <table class="wire-table" style="margin-top:8px;">
+            <thead><tr><th>#</th><th>Full Name</th><th>National ID</th><th>Phone</th><th>Tent</th><th>Check-in</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Abdullah Al-Qahtani</td><td>1098765431</td><td>0502345601</td><td>TENT-A01</td><td>[ ]</td></tr>
+              <tr><td>2</td><td>Faisal Al-Otaibi</td><td>1098765432</td><td>0502345602</td><td>TENT-A01</td><td>[ ]</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="caption">Includes print-specific CSS (@media print) hiding navigation bars for ground staff clipboards.</div>
+      </div>
+    </div>
+
+    <!-- Screen 7: Bus Drivers & Service Status -->
+    <div class="wf-card">
+      <div class="wf-head"><span>Screen 7: Bus Drivers &amp; Service Status</span><span>/admin/drivers.php</span></div>
+      <div class="wf-body">
+        <div class="wire-bar"><span>Registered Bus Drivers (3)</span><span>Fleet Service Status Control</span></div>
+        <table class="wire-table" style="margin-bottom:10px;">
+          <thead><tr><th>Driver</th><th>License</th><th>Status</th><th>Assign Bus</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td>Khalid Al-Harbi (driver1)</td><td>DL-2026-101</td><td><span class="badge ok">ACTIVE</span></td><td>[BUS-101 ▾] Assign</td><td>Out of Service | Remove</td></tr>
+            <tr><td>Fahad Al-Ghamdi (driver2)</td><td>DL-2026-102</td><td><span class="badge full">OUT OF SERVICE</span></td><td>[-- Unassigned --]</td><td>Set Active | Remove</td></tr>
+          </tbody>
+        </table>
+        <div class="wire-box">
+          <strong>+ Add New Bus Driver</strong> &bull; Full Name, Login Username, License #, Phone, Status, Initial Bus &amp; Password
+        </div>
+        <div class="caption">Admins add/remove drivers, assign 1:1 to buses, and toggle Active / Out of Service for drivers and buses.</div>
+      </div>
+    </div>
+
+    <!-- Screen 8: Logistics & Itineraries -->
+    <div class="wf-card">
+      <div class="wf-head"><span>Screen 8: Buses, Tents &amp; Itineraries</span><span>/admin/logistics.php</span></div>
+      <div class="wf-body">
+        <div class="wire-box">
+          <strong>Buses &amp; Departure Schedules</strong>
+          <table class="wire-table" style="margin-top:6px;">
+            <thead><tr><th>Bus #</th><th>Driver</th><th>Status</th><th>Seats</th><th>Departure</th><th></th></tr></thead>
+            <tbody>
+              <tr><td>BUS-101</td><td>Khalid Al-Harbi ▾</td><td>Active ▾</td><td>5 / [5]</td><td>8 Dhul-Hijjah 06:30 AM</td><td><span class="wire-btn">Update</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="wire-row">
+          <div class="wire-col"><strong>+ Add New Tent</strong><br>Tent #, Zone, Max Capacity</div>
+          <div class="wire-col"><strong>+ Publish Itinerary Event</strong><br>Target Bus, Event Time, Title &amp; Notes</div>
+        </div>
+        <div class="caption">Schedule edits and itinerary milestones reflect immediately on both Driver and Attendee portals.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mobile-grid">
+    <!-- Screen 9A: Attendee Read-Only Portal -->
+    <div class="wf-card">
+      <div class="wf-head"><span>Screen 9A: Attendee Read-Only Portal (Mobile-First)</span><span>/portal.php</span></div>
+      <div class="wf-body">
+        <div class="phone">
+          <div style="background:#0f766e;color:#fff;padding:10px;border-radius:10px;margin-bottom:10px;">
+            <div style="font-size:10px;opacity:.85;">HAJJ CAMPAIGN PORTAL (READ-ONLY)</div>
+            <div style="font-weight:700;font-size:14px;">Abdullah Al-Qahtani</div>
+            <div style="font-size:11px;">ID: 1098765431 • Hajj</div>
+          </div>
+          <div class="wire-box">
+            <strong>Assigned Transport</strong> <span class="badge ok">ACTIVE</span><br>
+            Bus: <strong>BUS-101</strong><br>
+            Driver: Khalid Al-Harbi (0501122334)<br>
+            Departure: 8 Dhul-Hijjah — 06:30 AM
+          </div>
+          <div class="wire-box">
+            <strong>Accommodation / Tent</strong><br>
+            Tent: <strong>TENT-A01</strong> (Mina Zone A — Gate 4)
+          </div>
+          <div class="wire-box">
+            <strong>Personal Itinerary</strong><br>
+            • 8 Dhul-Hijjah 06:30 AM — Tarwiyah Departure<br>
+            • 9 Dhul-Hijjah 05:00 AM — Arafat Transfer
+          </div>
+        </div>
+        <div class="caption" style="text-align:center;">Read-only pilgrim pass; blocks /admin/* and /driver_portal.php.</div>
+      </div>
+    </div>
+
+    <!-- Screen 9B: Bus Driver Schedule Portal -->
+    <div class="wf-card">
+      <div class="wf-head"><span>Screen 9B: Driver Schedule Portal (Mobile-First)</span><span>/driver_portal.php</span></div>
+      <div class="wf-body">
+        <div class="phone">
+          <div style="background:#1e293b;color:#fff;padding:10px;border-radius:10px;margin-bottom:10px;">
+            <div style="font-size:10px;opacity:.85;">BUS DRIVER PORTAL • <span class="badge ok">ACTIVE</span></div>
+            <div style="font-weight:700;font-size:14px;">Khalid Al-Harbi</div>
+            <div style="font-size:11px;">License: DL-2026-101 • driver1</div>
+          </div>
+          <div class="wire-box">
+            <strong>Assigned Bus: BUS-101</strong> <span class="badge ok">ACTIVE</span><br>
+            Departure: 8 Dhul-Hijjah — 06:30 AM<br>
+            Passenger Load: <strong>5 / 5 seats</strong>
+          </div>
+          <div class="wire-box">
+            <strong>Assigned Bus Schedule</strong><br>
+            • 8 Dhul-Hijjah 06:30 AM — Tarwiyah Departure<br>
+            • 9 Dhul-Hijjah 05:00 AM — Arafat Transfer
+          </div>
+          <div class="wire-box">
+            <strong>Passenger Manifest (5 Pilgrims)</strong><br>
+            1. Abdullah Al-Qahtani — TENT-A01 [ ] On Board
+          </div>
+        </div>
+        <div class="caption" style="text-align:center;">Read-only driver schedule &amp; boarding list; shows alerts if marked Out of Service.</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
