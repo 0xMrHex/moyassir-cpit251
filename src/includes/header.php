@@ -17,7 +17,8 @@ if ($role === 'admin') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($pageTitle) ?> — Moyassir (ميسر)</title>
-    <link rel="stylesheet" href="/assets/css/style.css?v=4">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="/assets/css/style.css?v=6">
 </head>
 <body>
 <?php if (isLoggedIn()): ?>
@@ -35,6 +36,14 @@ if ($role === 'admin') {
                 <?php endif; ?>
             </button>
             <a class="brand" href="<?= e(homePathForRole($role)) ?>">
+                <svg width="32" height="32" viewBox="0 0 72 72" fill="none" aria-hidden="true" style="flex-shrink:0;">
+                    <path d="M13 61V35C13 19.5 36 8 36 8C36 8 59 19.5 59 35V61" stroke="#CCFBF1" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M20 61V36C20 24 36 15.5 36 15.5C36 15.5 52 24 52 36V61" stroke="#99F6E4" stroke-width="2" stroke-opacity="0.5" stroke-linecap="round"/>
+                    <line x1="9" y1="61" x2="63" y2="61" stroke="#CCFBF1" stroke-width="3.6" stroke-linecap="round"/>
+                    <rect x="24" y="29" width="24" height="26" rx="2.5" fill="#0F172A"/>
+                    <rect x="24" y="34.5" width="24" height="4.2" fill="#FBBF24"/>
+                    <rect x="38.5" y="43" width="4.8" height="12" rx="1" fill="#F59E0B"/>
+                </svg>
                 <span>Moyassir &bull; ميسر</span>
             </a>
         </div>
@@ -82,6 +91,14 @@ if ($role === 'admin') {
             </svg>
         </button>
         <a class="brand" href="<?= e(homePathForRole($role)) ?>">
+            <svg width="30" height="30" viewBox="0 0 72 72" fill="none" aria-hidden="true" style="flex-shrink:0;">
+                <path d="M13 61V35C13 19.5 36 8 36 8C36 8 59 19.5 59 35V61" stroke="#CCFBF1" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M20 61V36C20 24 36 15.5 36 15.5C36 15.5 52 24 52 36V61" stroke="#99F6E4" stroke-width="2" stroke-opacity="0.5" stroke-linecap="round"/>
+                <line x1="9" y1="61" x2="63" y2="61" stroke="#CCFBF1" stroke-width="3.6" stroke-linecap="round"/>
+                <rect x="24" y="29" width="24" height="26" rx="2.5" fill="#0F172A"/>
+                <rect x="24" y="34.5" width="24" height="4.2" fill="#FBBF24"/>
+                <rect x="38.5" y="43" width="4.8" height="12" rx="1" fill="#F59E0B"/>
+            </svg>
             <span>Moyassir &bull; ميسر</span>
         </a>
     </div>

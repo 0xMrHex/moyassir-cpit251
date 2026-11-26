@@ -42,6 +42,14 @@ require_once __DIR__ . '/includes/header.php';
 
 <div class="login-shell">
     <div class="login-logo">
+        <svg width="64" height="64" viewBox="0 0 72 72" fill="none" aria-hidden="true" style="display:block;margin:0 auto 10px;">
+            <path d="M13 61V35C13 19.5 36 8 36 8C36 8 59 19.5 59 35V61" stroke="#0F766E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M20 61V36C20 24 36 15.5 36 15.5C36 15.5 52 24 52 36V61" stroke="#14B8A6" stroke-width="2" stroke-opacity="0.55" stroke-linecap="round"/>
+            <line x1="9" y1="61" x2="63" y2="61" stroke="#0F766E" stroke-width="3.5" stroke-linecap="round"/>
+            <rect x="24" y="29" width="24" height="26" rx="2.5" fill="#0F172A"/>
+            <rect x="24" y="34.5" width="24" height="4.2" fill="#FBBF24"/>
+            <rect x="38.5" y="43" width="4.8" height="12" rx="1" fill="#F59E0B"/>
+        </svg>
         <h1>Moyassir &bull; ميسر</h1>
         <p>Hajj &amp; Umrah Campaign Registration &amp; Logistics</p>
     </div>
