@@ -13,11 +13,11 @@
 
 ## Team Members
 
-| # | Student Name | University ID |
-|---|---|---|
-| 1 | **Mohammed Aljedani** | `2435544` |
-| 2 | **Omar Alofi** | `2436990` |
-| 3 | **Saud Faisal Almesfer** | `2435484` |
+| # | Student Name |
+|---|---|
+| 1 | **Mohammed Aljedani** |
+| 2 | **Omar Alofi** |
+| 3 | **Saud Faisal Almesfer** |
 
 ---
 
