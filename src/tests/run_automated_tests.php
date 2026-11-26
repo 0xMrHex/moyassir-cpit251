@@ -413,7 +413,6 @@ try {
     $supPost      = httpRequest("{$baseUrl}/support.php", $attendeeCookie, [
         'csrf_token' => $supCsrf,
         'category'   => 'Transport / Bus',
-        'priority'   => 'urgent',
         'subject'    => 'Assembly Gate Landmark for BUS-102',
         'message'    => 'Please confirm the exact Gate 3 pickup landmark for BUS-102 departure.',
     ]);

@@ -12,7 +12,6 @@ $error    = '';
 
 $form = [
     'category' => 'Transport / Bus',
-    'priority' => 'normal',
     'subject'  => '',
     'message'  => '',
 ];
@@ -21,7 +20,6 @@ if ($attendee && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $csrf = $_POST['csrf_token'] ?? '';
     $form = [
         'category' => trim((string) ($_POST['category'] ?? 'Transport / Bus')),
-        'priority' => trim((string) ($_POST['priority'] ?? 'normal')),
         'subject'  => trim((string) ($_POST['subject'] ?? '')),
         'message'  => trim((string) ($_POST['message'] ?? '')),
     ];
@@ -43,30 +41,6 @@ if ($attendee && $_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $tickets = $attendee ? $supportModel->getByAttendeeId((int) $attendee['attendee_id']) : [];
-
-$pilgrimPrompts = [
-    [
-        'label'    => 'Bus Gate / Pickup Help',
-        'category' => 'Transport / Bus',
-        'priority' => 'normal',
-        'subject'  => 'Bus Assembly Point & Gate Inquiry',
-        'text'     => 'Assalamu Alaikum, could you please confirm the exact assembly gate and boarding time for my assigned bus?',
-    ],
-    [
-        'label'    => 'Tent / Mattress Request',
-        'category' => 'Accommodation / Tent',
-        'priority' => 'normal',
-        'subject'  => 'Tent Placement Assistance',
-        'text'     => 'Assalamu Alaikum, I would like assistance regarding my assigned tent space / family proximity.',
-    ],
-    [
-        'label'    => 'Urgent Field Help',
-        'category' => 'Medical / Urgent',
-        'priority' => 'urgent',
-        'subject'  => 'Urgent Field Assistance Needed',
-        'text'     => 'I need immediate field assistance at my current location. Please contact me on my registered mobile number.',
-    ],
-];
 
 $pageTitle = 'Customer Support';
 $activeNav = 'support';
@@ -90,65 +64,38 @@ require_once __DIR__ . '/includes/header.php';
 
     <div class="card" id="support-form">
         <h2>Contact Customer Support — Submit a Message</h2>
-        <p style="font-size:13px;color:var(--muted);margin-top:-6px;margin-bottom:14px;">
+        <p style="font-size:13px;color:var(--muted);margin-top:-6px;margin-bottom:16px;">
             Your pilgrim identity and current assignments (<strong><?= e($attendee['full_name']) ?></strong> &bull;
             ID: <code><?= e($attendee['national_id']) ?></code> &bull;
             Bus: <strong><?= e($attendee['bus_number'] ?? 'Unassigned') ?></strong> &bull;
             Tent: <strong><?= e($attendee['tent_number'] ?? 'Unassigned') ?></strong>) are attached automatically.
         </p>
 
-        <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;">Quick Topic Templates (optional — tap to fill):</div>
-        <div class="quick-chips" style="margin-bottom:14px;">
-            <?php foreach ($pilgrimPrompts as $pp): ?>
-                <button type="button" class="chip-btn"
-                        data-target="message"
-                        data-subject-target="subject"
-                        data-subject="<?= e($pp['subject']) ?>"
-                        data-category-target="category"
-                        data-category="<?= e($pp['category']) ?>"
-                        data-priority-target="priority"
-                        data-priority="<?= e($pp['priority']) ?>"
-                        data-text="<?= e($pp['text']) ?>">
-                    + <?= e($pp['label']) ?>
-                </button>
-            <?php endforeach; ?>
-        </div>
-
         <form method="POST" action="/support.php#support-form">
             <input type="hidden" name="csrf_token" value="<?= e(getCsrfToken()) ?>">
 
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="category">Support Topic / Category</label>
-                    <select id="category" name="category" required>
-                        <?php foreach (SupportTicket::ALLOWED_CATEGORIES as $cat): ?>
-                            <option value="<?= e($cat) ?>" <?= $form['category'] === $cat ? 'selected' : '' ?>>
-                                <?= e($cat) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="priority">Urgency Level</label>
-                    <select id="priority" name="priority" required>
-                        <option value="normal" <?= $form['priority'] === 'normal' ? 'selected' : '' ?>>Normal — Standard Inquiry</option>
-                        <option value="urgent" <?= $form['priority'] === 'urgent' ? 'selected' : '' ?>>Urgent — Immediate Field Assistance</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label for="category">Support Topic / Category</label>
+                <select id="category" name="category" required>
+                    <?php foreach (SupportTicket::ALLOWED_CATEGORIES as $cat): ?>
+                        <option value="<?= e($cat) ?>" <?= $form['category'] === $cat ? 'selected' : '' ?>>
+                            <?= e($cat)
+                        ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
 
             <div class="form-group">
                 <label for="subject">Subject / Short Summary</label>
                 <input type="text" id="subject" name="subject" maxlength="120"
                        value="<?= e($form['subject']) ?>"
-                       placeholder="e.g., Need help finding BUS-101 gate or tent placement request" required>
+                       placeholder="e.g., Bus gate question or tent placement request" required>
             </div>
 
             <div class="form-group">
                 <label for="message">Please describe how Customer Support can assist you</label>
                 <textarea id="message" name="message" class="composer-textarea" rows="4" maxlength="1500"
-                          placeholder="Write your full message, location details, or request for Campaign Administration..." required><?= e($form['message']) ?></textarea>
+                          placeholder="Write your message for Campaign Administration..." required><?= e($form['message']) ?></textarea>
             </div>
 
             <button type="submit" class="btn" style="width:100%;max-width:320px;min-height:42px;">Send Message to Campaign Admin</button>
@@ -169,16 +116,12 @@ require_once __DIR__ . '/includes/header.php';
                     default       => 'badge-hajj',
                 };
                 $statusLabel = strtoupper(str_replace('_', ' ', $status));
-                $isUrgent = ($t['priority'] === 'urgent');
             ?>
-                <div class="ticket-card <?= $status === 'resolved' ? 'resolved' : ($isUrgent ? 'urgent' : '') ?>">
+                <div class="ticket-card <?= $status === 'resolved' ? 'resolved' : '' ?>">
                     <div class="ticket-meta">
                         <div>
                             <strong>Ticket #<?= (int) $t['ticket_id'] ?></strong> &bull;
                             <span><?= e($t['category']) ?></span>
-                            <?php if ($isUrgent): ?>
-                                <span class="badge badge-full" style="margin-left:6px;">URGENT</span>
-                            <?php endif; ?>
                         </div>
                         <div>
                             <span class="badge <?= $statusBadge ?>"><?= e($statusLabel) ?></span>

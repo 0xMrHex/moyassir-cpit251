@@ -36,14 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $statusFilter   = trim((string) ($_GET['status'] ?? ''));
-$priorityFilter = trim((string) ($_GET['priority'] ?? ''));
+$categoryFilter = trim((string) ($_GET['category'] ?? ''));
 
-$tickets    = $supportModel->getAll($statusFilter, $priorityFilter);
-$allTickets = ($statusFilter === '' && $priorityFilter === '') ? $tickets : $supportModel->getAll();
+$tickets    = $supportModel->getAll($statusFilter, $categoryFilter);
+$allTickets = ($statusFilter === '' && $categoryFilter === '') ? $tickets : $supportModel->getAll();
 
-$openCount     = count(array_filter($allTickets, static fn(array $t): bool => in_array($t['status'], ['open', 'in_progress'], true)));
-$urgentCount   = count(array_filter($allTickets, static fn(array $t): bool => in_array($t['status'], ['open', 'in_progress'], true) && $t['priority'] === 'urgent'));
-$resolvedCount = count(array_filter($allTickets, static fn(array $t): bool => $t['status'] === 'resolved'));
+$openCount       = count(array_filter($allTickets, static fn(array $t): bool => $t['status'] === 'open'));
+$inProgressCount = count(array_filter($allTickets, static fn(array $t): bool => $t['status'] === 'in_progress'));
+$resolvedCount   = count(array_filter($allTickets, static fn(array $t): bool => $t['status'] === 'resolved'));
 
 $quickReplies = [
     [
@@ -59,7 +59,7 @@ $quickReplies = [
     [
         'label'  => 'Coordinator Calling Shortly',
         'status' => 'in_progress',
-        'text'   => 'A campaign field coordinator has received your urgent message and will contact your mobile number shortly to assist you.',
+        'text'   => 'A campaign field coordinator has received your message and will contact your mobile number shortly to assist you.',
     ],
     [
         'label'  => 'Issue Resolved',
@@ -90,14 +90,14 @@ require_once dirname(__DIR__) . '/includes/header.php';
 
 <div class="grid-4" style="grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));">
     <div class="kpi <?= $openCount > 0 ? 'accent' : '' ?>">
-        <div class="kpi-label">Active Support Tickets</div>
+        <div class="kpi-label">Open Requests</div>
         <div class="kpi-value"><?= $openCount ?></div>
-        <div class="kpi-sub">Open or In Progress</div>
+        <div class="kpi-sub">Awaiting initial reply</div>
     </div>
-    <div class="kpi <?= $urgentCount > 0 ? 'danger' : '' ?>">
-        <div class="kpi-label">Urgent Field Requests</div>
-        <div class="kpi-value"><?= $urgentCount ?></div>
-        <div class="kpi-sub">Immediate attention needed</div>
+    <div class="kpi">
+        <div class="kpi-label">In Progress</div>
+        <div class="kpi-value"><?= $inProgressCount ?></div>
+        <div class="kpi-sub">Being handled by staff</div>
     </div>
     <div class="kpi">
         <div class="kpi-label">Resolved Tickets</div>
@@ -118,11 +118,14 @@ require_once dirname(__DIR__) . '/includes/header.php';
             </select>
         </div>
         <div class="form-group">
-            <label for="priority">Filter by Priority</label>
-            <select id="priority" name="priority">
-                <option value="">All Priorities</option>
-                <option value="urgent" <?= $priorityFilter === 'urgent' ? 'selected' : '' ?>>Urgent Only</option>
-                <option value="normal" <?= $priorityFilter === 'normal' ? 'selected' : '' ?>>Normal Only</option>
+            <label for="category">Filter by Topic</label>
+            <select id="category" name="category">
+                <option value="">All Topics</option>
+                <?php foreach (SupportTicket::ALLOWED_CATEGORIES as $cat): ?>
+                    <option value="<?= e($cat) ?>" <?= $categoryFilter === $cat ? 'selected' : '' ?>>
+                        <?= e($cat) ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
         </div>
         <div class="actions-inline">
@@ -147,17 +150,13 @@ require_once dirname(__DIR__) . '/includes/header.php';
                 default       => 'badge-hajj',
             };
             $statusLabel = strtoupper(str_replace('_', ' ', $status));
-            $isUrgent    = ($t['priority'] === 'urgent');
             $hasReply    = !empty($t['admin_reply']);
         ?>
-            <div class="ticket-card <?= $status === 'resolved' ? 'resolved' : ($isUrgent ? 'urgent' : '') ?>" id="ticket-<?= $tid ?>">
+            <div class="ticket-card <?= $status === 'resolved' ? 'resolved' : '' ?>" id="ticket-<?= $tid ?>">
                 <div class="ticket-meta">
                     <div>
                         <strong>Ticket #<?= $tid ?></strong> &bull;
                         <span><?= e($t['category']) ?></span>
-                        <?php if ($isUrgent): ?>
-                            <span class="badge badge-full" style="margin-left:6px;">URGENT</span>
-                        <?php endif; ?>
                         <span class="badge <?= $statusBadge ?>" style="margin-left:6px;"><?= e($statusLabel) ?></span>
                     </div>
                     <div><?= e($t['created_at']) ?></div>

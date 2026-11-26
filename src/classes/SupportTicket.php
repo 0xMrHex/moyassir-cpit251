@@ -82,7 +82,7 @@ class SupportTicket
     /**
      * Retrieve all tickets with full pilgrim logistics context for the Admin Support Inbox.
      */
-    public function getAll(?string $statusFilter = null, ?string $priorityFilter = null): array
+    public function getAll(?string $statusFilter = null, ?string $categoryFilter = null): array
     {
         $where  = [];
         $params = [];
@@ -91,9 +91,9 @@ class SupportTicket
             $where[]           = 'st.status = :status';
             $params[':status'] = $statusFilter;
         }
-        if ($priorityFilter !== null && $priorityFilter !== '' && in_array($priorityFilter, self::ALLOWED_PRIORITIES, true)) {
-            $where[]             = 'st.priority = :priority';
-            $params[':priority'] = $priorityFilter;
+        if ($categoryFilter !== null && $categoryFilter !== '' && in_array($categoryFilter, self::ALLOWED_CATEGORIES, true)) {
+            $where[]             = 'st.category = :category';
+            $params[':category'] = $categoryFilter;
         }
 
         $whereSql = empty($where) ? '' : ('WHERE ' . implode(' AND ', $where));
@@ -110,7 +110,6 @@ class SupportTicket
              {$whereSql}
              ORDER BY
                 CASE st.status WHEN 'open' THEN 0 WHEN 'in_progress' THEN 1 ELSE 2 END ASC,
-                CASE st.priority WHEN 'urgent' THEN 0 ELSE 1 END ASC,
                 st.ticket_id DESC",
             $params
         );

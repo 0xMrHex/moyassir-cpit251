@@ -131,14 +131,13 @@ require_once dirname(__DIR__) . '/includes/header.php';
                     <th>Ticket</th>
                     <th>Pilgrim</th>
                     <th>Category &amp; Subject</th>
-                    <th>Priority</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (empty($recentTickets)): ?>
-                    <tr><td colspan="6" style="text-align:center;color:var(--muted);">No support requests submitted yet.</td></tr>
+                    <tr><td colspan="5" style="text-align:center;color:var(--muted);">No support requests submitted yet.</td></tr>
                 <?php else: ?>
                     <?php foreach ($recentTickets as $rt):
                         $st = (string) $rt['status'];
@@ -161,11 +160,6 @@ require_once dirname(__DIR__) . '/includes/header.php';
                                 <small style="color:var(--muted);"><?= e($rt['category']) ?></small><br>
                                 <strong><?= e($rt['subject']) ?></strong>
                             </div>
-                        </td>
-                        <td data-label="Priority">
-                            <span class="badge <?= $rt['priority'] === 'urgent' ? 'badge-full' : 'badge-muted' ?>">
-                                <?= strtoupper(e($rt['priority'])) ?>
-                            </span>
                         </td>
                         <td data-label="Status"><span class="badge <?= $stClass ?>"><?= strtoupper(str_replace('_', ' ', e($st))) ?></span></td>
                         <td class="cell-actions"><a href="/admin/support.php#ticket-<?= (int) $rt['ticket_id'] ?>" class="btn btn-sm">Review / Reply</a></td>
